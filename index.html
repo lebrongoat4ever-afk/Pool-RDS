@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Level Tracker</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f2f2f7; text-align: center; padding: 16px; margin: 0; }
+    .card { background: white; padding: 18px; border-radius: 12px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .btn { width: 100%; padding: 16px; margin: 6px 0; font-size: 18px; font-weight: bold; border: none; border-radius: 10px; cursor: pointer; }
+    .btn-success { background: #34c759; color: white; }
+    .btn-failure { background: #ff3b30; color: white; }
+    .btn-secondary { background: #8e8e93; color: white; margin-top: 10px; }
+    .btn-danger { background: #ff9500; color: white; margin-top: 10px; }
+    .tries { display: flex; justify-content: center; gap: 12px; font-size: 28px; margin: 12px 0; }
+    .controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 10px; }
+    select { padding: 8px 12px; font-size: 16px; border-radius: 8px; border: 1px solid #ccc; background: white; }
+    .row { display: flex; gap: 10px; }
+    .row .btn { flex: 1; }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <div class="controls">
+      <label for="start-level"><strong>Start Level:</strong></label>
+      <select id="start-level" onchange="setInitialLevel(this.value)">
+        <!-- Level options 1-15 generated dynamically -->
+      </select>
+    </div>
+    <h1 id="level-display" style="margin: 8px 0;">Level 1</h1>
+    <div style="color: #666; font-size: 14px;">Current 3-Try Round:</div>
+    <div class="tries" id="tries-display">⚪ ⚪ ⚪</div>
+  </div>
+
+  <button class="btn btn-success" onclick="logTry('win')">+ SUCCESS</button>
+  <button class="btn btn-failure" onclick="logTry('loss')">- FAILURE</button>
+
+  <div class="row">
+    <button class="btn btn-secondary" onclick="undo()">Undo Tap</button>
+    <button class="btn btn-danger" onclick="resetApp()">Reset All</button>
+  </div>
+
+  <div class="card" style="margin-top: 16px;">
+    <canvas id="progressChart"></canvas>
+  </div>
+
+  <script>
+    let currentLevel = 1;
+    let currentRound = []; // Holds 'win' or 'loss' for current 3-try attempt
+    let history = [];      // Stores snapshots: { level, round, date }
+
+    // Populate Level Selector Dropdown
+    const selectEl = document.getElementById('start-level');
+    for (let i = 1; i <= 15; i++) {
+      let opt = document.createElement('option');
+      opt.value = i;
+      opt.innerText = `Level ${i}`;
+      selectEl.appendChild(opt);
+    }
+
+    // Chart Configuration
+    const ctx = document.getElementById('progressChart').getContext('2d');
+    const chart = new Chart(ctx, {
+      type: 'line',
+      data: { labels: [], datasets: [{ label: 'Level Progression', data: [], borderColor: '#007aff', backgroundColor: '#007aff', fill: false, tension: 0.1 }] },
+      options: {
+        responsive: true,
+        scales: {
+          y: { min: 1, max: 15, ticks: { stepSize: 1 } },
+          x: {
+            ticks: {
+              autoSkip: false,
+              callback: function(val, index) {
+                const label = this.getLabelForValue(val);
+                return label ? label.split('\n') : '';
+              }
+            }
+          }
+        }
+      }
+    });
+
+    function setInitialLevel(val) {
+      if (history.length === 0 && currentRound.length === 0) {
+        currentLevel = parseInt(val);
+        updateUI();
+      } else {
+        if (confirm("Changing initial level will reset current progress. Continue?")) {
+          currentLevel = parseInt(val);
+          history = [];
+          currentRound = [];
+          updateUI();
+        } else {
+          selectEl.value = currentLevel;
+        }
+      }
+    }
+
+    function updateUI() {
+      document.getElementById('level-display').innerText = `Level ${currentLevel}`;
+      selectEl.value = currentLevel;
+
+      // Update 3-try visual indicators
+      let dots = currentRound.map(r => r === 'win' ? '🟢' : '🔴');
+      while (dots.length < 3) dots.push('⚪');
+      document.getElementById('tries-display').innerText = dots.join(' ');
+
+      // Build Graph X-Axis Labels (Attempts spaced equally, Dates on first try of each day)
+      let labels = [];
+      let levelData = [];
+      let seenDates = new Set();
+
+      history.forEach((entry, idx) => {
+        let dateStr = new Date(entry.timestamp).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+        let xLabel = `Att ${idx + 1}`;
+        
+        // Append date tag if it's the first attempt recorded on that date
+        if (!seenDates.has(dateStr)) {
+          seenDates.add(dateStr);
+          xLabel += `\n(${dateStr})`;
+        }
+
+        labels.push(xLabel);
+        levelData.push(entry.level);
+      });
+
+      chart.data.labels = labels;
+      chart.data.datasets[0].data = levelData;
+      chart.update();
+    }
+
+    function logTry(result) {
+      const now = new Date().toISOString();
+      history.push({ level: currentLevel, round: [...currentRound], timestamp: now });
+      currentRound.push(result);
+
+      const wins = currentRound.filter(r => r === 'win').length;
+      const total = currentRound.length;
+
+      if (wins === 2) {
+        currentLevel = Math.min(15, currentLevel + 1);
+        currentRound = [];
+      } else if (total === 3) {
+        if (wins === 0) currentLevel = Math.max(1, currentLevel - 1);
+        currentRound = [];
+      }
+      updateUI();
+    }
+
+    function undo() {
+      if (history.length === 0) return;
+      let lastState = history.pop();
+      currentLevel = lastState.level;
+      currentRound = lastState.round;
+      updateUI();
+    }
+
+    function resetApp() {
+      if (confirm("Reset all recorded data?")) {
+        currentLevel = parseInt(selectEl.value) || 1;
+        currentRound = [];
+        history = [];
+        updateUI();
+      }
+    }
+
+    updateUI();
+  </script>
+</body>
+</html>
