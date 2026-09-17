@@ -3,27 +3,66 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Level Tracker</title>
+  <title>Level Tracker Pro</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f2f2f7; text-align: center; padding: 16px; margin: 0; }
-    .card { background: white; padding: 18px; border-radius: 12px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    :root {
+      --bg-color: #f2f2f7;
+      --card-bg: #ffffff;
+      --text-color: #1c1c1e;
+      --subtext-color: #666666;
+      --border-color: #cccccc;
+      --stat-bg: #f2f2f7;
+    }
+
+    body.dark-mode {
+      --bg-color: #000000;
+      --card-bg: #1c1c1e;
+      --text-color: #ffffff;
+      --subtext-color: #8e8e93;
+      --border-color: #38383a;
+      --stat-bg: #2c2c2e;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      text-align: center;
+      padding: 16px;
+      margin: 0;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .theme-toggle { background: none; border: none; font-size: 22px; cursor: pointer; padding: 4px; }
+    .card { background: var(--card-bg); padding: 18px; border-radius: 12px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); transition: background 0.3s; }
     .btn { width: 100%; padding: 16px; margin: 6px 0; font-size: 18px; font-weight: bold; border: none; border-radius: 10px; cursor: pointer; }
     .btn-success { background: #34c759; color: white; }
     .btn-failure { background: #ff3b30; color: white; }
-    .btn-secondary { background: #8e8e93; color: white; margin-top: 10px; }
-    .btn-danger { background: #ff9500; color: white; margin-top: 10px; }
+    .btn-secondary { background: #8e8e93; color: white; }
+    .btn-danger { background: #ff9500; color: white; }
     .tries { display: flex; justify-content: center; gap: 12px; font-size: 28px; margin: 12px 0; }
     .controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 10px; }
-    select { padding: 8px 12px; font-size: 16px; border-radius: 8px; border: 1px solid #ccc; background: white; }
-    .row { display: flex; gap: 10px; }
-    .row .btn { flex: 1; }
+    select { padding: 8px 12px; font-size: 16px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-color); }
+    .row { display: flex; gap: 10px; margin-top: 6px; }
+    .row .btn { flex: 1; padding: 12px; font-size: 15px; }
     .filter-bar { display: flex; justify-content: center; gap: 8px; margin-bottom: 10px; }
-    .filter-btn { padding: 6px 14px; border: 1px solid #007aff; background: white; color: #007aff; border-radius: 15px; font-weight: bold; cursor: pointer; }
+    .filter-btn { padding: 6px 14px; border: 1px solid #007aff; background: transparent; color: #007aff; border-radius: 15px; font-weight: bold; cursor: pointer; }
     .filter-btn.active { background: #007aff; color: white; }
+    h2 { font-size: 16px; margin: 0 0 12px 0; color: var(--text-color); }
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 14px; }
+    .stat-box { background: var(--stat-bg); padding: 10px; border-radius: 8px; }
+    .stat-val { font-size: 18px; font-weight: bold; color: #007aff; margin-top: 4px; }
   </style>
 </head>
 <body>
+
+  <div class="header-bar">
+    <span style="font-weight: bold; font-size: 18px;">Level Tracker</span>
+    <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">🌙</button>
+  </div>
 
   <div class="card">
     <div class="controls">
@@ -31,7 +70,7 @@
       <select id="start-level" onchange="setInitialLevel(this.value)"></select>
     </div>
     <h1 id="level-display" style="margin: 8px 0;">Level 1</h1>
-    <div style="color: #666; font-size: 14px;">Current 3-Try Round:</div>
+    <div style="color: var(--subtext-color); font-size: 14px;">Current 3-Try Round:</div>
     <div class="tries" id="tries-display">⚪ ⚪ ⚪</div>
   </div>
 
@@ -43,7 +82,20 @@
     <button class="btn btn-danger" onclick="resetApp()">Reset All</button>
   </div>
 
+  <!-- Summary Stats Card -->
   <div class="card" style="margin-top: 16px;">
+    <h2>Performance Summary</h2>
+    <div class="stats-grid">
+      <div class="stat-box">Total Taps<div class="stat-val" id="stat-taps">0</div></div>
+      <div class="stat-box">Rounds Played<div class="stat-val" id="stat-rounds">0</div></div>
+      <div class="stat-box">2/2 Clean Rate<div class="stat-val" id="stat-clean">0%</div></div>
+      <div class="stat-box">Highest Level<div class="stat-val" id="stat-max">Lvl 1</div></div>
+    </div>
+  </div>
+
+  <!-- Chart 1: Progression -->
+  <div class="card">
+    <h2>Level Progression Over Time</h2>
     <div class="filter-bar">
       <button class="filter-btn" id="f-10" onclick="setFilter(10)">Last 10</button>
       <button class="filter-btn active" id="f-30" onclick="setFilter(30)">Last 30</button>
@@ -52,12 +104,71 @@
     <canvas id="progressChart"></canvas>
   </div>
 
+  <!-- Chart 2: Efficiency Breakdown -->
+  <div class="card">
+    <h2>Level Efficiency (% of Total Rounds)</h2>
+    <canvas id="breakdownChart" style="height: 380px;"></canvas>
+  </div>
+
+  <!-- Data Management / Backup Card -->
+  <div class="card">
+    <h2>Backup & Data Controls</h2>
+    <div class="row">
+      <button class="btn btn-secondary" onclick="exportCSV()">Export CSV</button>
+      <button class="btn btn-secondary" onclick="exportJSON()">Export JSON</button>
+    </div>
+    <div class="row">
+      <button class="btn btn-secondary" onclick="document.getElementById('file-input').click()">Import Data</button>
+      <input type="file" id="file-input" style="display:none;" onchange="importJSON(event)" accept=".json">
+    </div>
+  </div>
+
   <script>
+    Chart.register(ChartDataLabels);
+
     let currentLevel = 1;
     let currentRound = [];
     let history = []; 
-    let displayLimit = 30; // Default view window
+    let displayLimit = 30;
 
+    function loadSavedData() {
+      const savedHistory = localStorage.getItem('levelTracker_history');
+      const savedLevel = localStorage.getItem('levelTracker_level');
+      const savedRound = localStorage.getItem('levelTracker_round');
+      const savedTheme = localStorage.getItem('levelTracker_theme');
+
+      if (savedHistory) history = JSON.parse(savedHistory);
+      if (savedLevel) currentLevel = parseInt(savedLevel);
+      if (savedRound) currentRound = JSON.parse(savedRound);
+      if (savedTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+        document.getElementById('theme-btn').innerText = '☀️';
+      }
+    }
+
+    function saveData() {
+      localStorage.setItem('levelTracker_history', JSON.stringify(history));
+      localStorage.setItem('levelTracker_level', currentLevel);
+      localStorage.setItem('levelTracker_round', JSON.stringify(currentRound));
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle('dark-mode');
+      const isDark = document.body.classList.contains('dark-mode');
+      document.getElementById('theme-btn').innerText = isDark ? '☀️' : '🌙';
+      localStorage.setItem('levelTracker_theme', isDark ? 'dark' : 'light');
+      updateChartColors();
+    }
+
+    function getChartTextColor() {
+      return document.body.classList.contains('dark-mode') ? '#ffffff' : '#1c1c1e';
+    }
+
+    function getChartGridColor() {
+      return document.body.classList.contains('dark-mode') ? '#38383a' : '#e5e5ea';
+    }
+
+    // Populate Level Selector Dropdown
     const selectEl = document.getElementById('start-level');
     for (let i = 1; i <= 15; i++) {
       let opt = document.createElement('option');
@@ -66,13 +177,15 @@
       selectEl.appendChild(opt);
     }
 
-    const ctx = document.getElementById('progressChart').getContext('2d');
-    const chart = new Chart(ctx, {
+    // Chart 1 Setup
+    const ctxProgress = document.getElementById('progressChart').getContext('2d');
+    const progressChart = new Chart(ctxProgress, {
       type: 'line',
       data: { labels: [], datasets: [{ label: 'Level', data: [], borderColor: '#007aff', backgroundColor: '#007aff', pointRadius: 3, fill: false, tension: 0.1 }] },
       options: {
         responsive: true,
         plugins: {
+          datalabels: { display: false },
           tooltip: {
             callbacks: {
               title: (items) => {
@@ -85,21 +198,75 @@
           }
         },
         scales: {
-          y: { min: 1, max: 15, ticks: { stepSize: 1 } },
-          x: {
-            ticks: {
-              maxRotation: 0,
-              autoSkip: true,
-              maxTicksLimit: 8, // Keeps X-axis clean regardless of data size
-              callback: function(val, index) {
-                const rawLabel = this.getLabelForValue(val);
-                return rawLabel ? rawLabel.split('\n') : '';
-              }
-            }
-          }
+          y: { min: 1, max: 15, ticks: { stepSize: 1, color: getChartTextColor }, grid: { color: getChartGridColor } },
+          x: { ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 8, color: getChartTextColor, callback: function(val) { const l = this.getLabelForValue(val); return l ? l.split('\n') : ''; } }, grid: { color: getChartGridColor } }
         }
       }
     });
+
+    // Chart 2 Setup
+    const ctxBreakdown = document.getElementById('breakdownChart').getContext('2d');
+    const breakdownChart = new Chart(ctxBreakdown, {
+      type: 'bar',
+      data: {
+        labels: Array.from({length: 15}, (_, i) => `Lvl ${i + 1}`),
+        datasets: [
+          { label: '2/2 (Clean)', data: Array(15).fill(0), backgroundColor: '#34c759' },
+          { label: '2/3 (Hard)', data: Array(15).fill(0), backgroundColor: '#007aff' },
+          { label: '1/3 (Hold)', data: Array(15).fill(0), backgroundColor: '#ff9500' },
+          { label: '0/3 (Drop)', data: Array(15).fill(0), backgroundColor: '#ff3b30' }
+        ]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        plugins: {
+          legend: { labels: { color: getChartTextColor } },
+          datalabels: {
+            color: '#fff',
+            font: { weight: 'bold', size: 11 },
+            formatter: (value, ctx) => {
+              if (value === 0) return '';
+              let datasets = ctx.chart.data.datasets;
+              let total = datasets.reduce((sum, ds) => sum + ds.data[ctx.dataIndex], 0);
+              if (total === 0) return '';
+              let pct = Math.round((value / total) * 100);
+              return pct > 7 ? `${pct}%` : '';
+            }
+          },
+          tooltip: {
+            callbacks: {
+              label: (context) => {
+                let value = context.raw || 0;
+                let datasets = context.chart.data.datasets;
+                let total = datasets.reduce((sum, ds) => sum + ds.data[context.dataIndex], 0);
+                let pct = total > 0 ? Math.round((value / total) * 100) : 0;
+                return `${context.dataset.label}: ${value} (${pct}% of ${total} rounds)`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: { stacked: true, title: { display: true, text: 'Total Rounds Played', color: getChartTextColor }, ticks: { stepSize: 1, color: getChartTextColor }, grid: { color: getChartGridColor } },
+          y: { stacked: true, ticks: { color: getChartTextColor }, grid: { color: getChartGridColor } }
+        }
+      }
+    });
+
+    function updateChartColors() {
+      const textColor = getChartTextColor();
+      const gridColor = getChartGridColor();
+
+      [progressChart, breakdownChart].forEach(chart => {
+        chart.options.scales.x.ticks.color = textColor;
+        chart.options.scales.x.grid.color = gridColor;
+        chart.options.scales.y.ticks.color = textColor;
+        chart.options.scales.y.grid.color = gridColor;
+        if (chart.options.scales.x.title) chart.options.scales.x.title.color = textColor;
+        if (chart.options.plugins.legend) chart.options.plugins.legend.labels.color = textColor;
+        chart.update();
+      });
+    }
 
     function setFilter(limit) {
       displayLimit = limit;
@@ -113,11 +280,13 @@
     function setInitialLevel(val) {
       if (history.length === 0 && currentRound.length === 0) {
         currentLevel = parseInt(val);
+        saveData();
         updateUI();
       } else if (confirm("Changing initial level will reset progress. Continue?")) {
         currentLevel = parseInt(val);
         history = [];
         currentRound = [];
+        saveData();
         updateUI();
       } else {
         selectEl.value = currentLevel;
@@ -132,10 +301,8 @@
       while (dots.length < 3) dots.push('⚪');
       document.getElementById('tries-display').innerText = dots.join(' ');
 
-      // Add attempt metadata
+      // Update Line Chart
       let enrichedHistory = history.map((h, i) => ({ ...h, attemptNum: i + 1 }));
-
-      // Apply view filter limit
       let visibleHistory = displayLimit > 0 ? enrichedHistory.slice(-displayLimit) : enrichedHistory;
 
       let labels = [];
@@ -145,35 +312,85 @@
       visibleHistory.forEach((entry) => {
         let dateStr = new Date(entry.timestamp).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
         let xLabel = `#${entry.attemptNum}`;
-
-        // Only display date label when date transitions
         if (!seenDates.has(dateStr)) {
           seenDates.add(dateStr);
           xLabel += `\n${dateStr}`;
         }
-
         labels.push(xLabel);
         levelData.push(entry.level);
       });
 
-      chart.data.labels = labels;
-      chart.data.datasets[0].data = levelData;
-      chart.data.fullHistory = visibleHistory; // Attach history for tooltips
-      chart.update();
+      progressChart.data.labels = labels;
+      progressChart.data.datasets[0].data = levelData;
+      progressChart.data.fullHistory = visibleHistory;
+      progressChart.update();
+
+      // Update Breakdown Chart & Metrics
+      let counts = {
+        twoOfTwo: Array(15).fill(0),
+        twoOfThree: Array(15).fill(0),
+        oneOfThree: Array(15).fill(0),
+        zeroOfThree: Array(15).fill(0)
+      };
+
+      let completedRounds = 0;
+      let totalTwoOfTwo = 0;
+      let maxLvl = currentLevel;
+
+      history.forEach(entry => {
+        if (entry.level > maxLvl) maxLvl = entry.level;
+        if (entry.roundResult) {
+          completedRounds++;
+          let lvlIdx = entry.level - 1;
+          if (entry.roundResult === '2/2') { counts.twoOfTwo[lvlIdx]++; totalTwoOfTwo++; }
+          else if (entry.roundResult === '2/3') counts.twoOfThree[lvlIdx]++;
+          else if (entry.roundResult === '1/3') counts.oneOfThree[lvlIdx]++;
+          else if (entry.roundResult === '0/3') counts.zeroOfThree[lvlIdx]++;
+        }
+      });
+
+      breakdownChart.data.datasets[0].data = counts.twoOfTwo;
+      breakdownChart.data.datasets[1].data = counts.twoOfThree;
+      breakdownChart.data.datasets[2].data = counts.oneOfThree;
+      breakdownChart.data.datasets[3].data = counts.zeroOfThree;
+      breakdownChart.update();
+
+      // Summary Box
+      document.getElementById('stat-taps').innerText = history.length;
+      document.getElementById('stat-rounds').innerText = completedRounds;
+      document.getElementById('stat-clean').innerText = completedRounds > 0 ? `${Math.round((totalTwoOfTwo / completedRounds) * 100)}%` : '0%';
+      document.getElementById('stat-max').innerText = `Lvl ${maxLvl}`;
     }
 
     function logTry(result) {
-      history.push({ level: currentLevel, round: [...currentRound], timestamp: new Date().toISOString() });
-      currentRound.push(result);
+      let roundResult = null;
+      let nextLevel = currentLevel;
+      let nextRound = [...currentRound, result];
 
-      const wins = currentRound.filter(r => r === 'win').length;
+      const wins = nextRound.filter(r => r === 'win').length;
       if (wins === 2) {
-        currentLevel = Math.min(15, currentLevel + 1);
-        currentRound = [];
-      } else if (currentRound.length === 3) {
-        if (wins === 0) currentLevel = Math.max(1, currentLevel - 1);
-        currentRound = [];
+        roundResult = nextRound.length === 2 ? '2/2' : '2/3';
+        nextLevel = Math.min(15, currentLevel + 1);
+      } else if (nextRound.length === 3) {
+        roundResult = wins === 1 ? '1/3' : '0/3';
+        if (wins === 0) nextLevel = Math.max(1, currentLevel - 1);
       }
+
+      history.push({
+        level: currentLevel,
+        round: [...currentRound],
+        roundResult: roundResult,
+        timestamp: new Date().toISOString()
+      });
+
+      if (roundResult) {
+        currentLevel = nextLevel;
+        currentRound = [];
+      } else {
+        currentRound = nextRound;
+      }
+
+      saveData();
       updateUI();
     }
 
@@ -182,6 +399,7 @@
       let lastState = history.pop();
       currentLevel = lastState.level;
       currentRound = lastState.round;
+      saveData();
       updateUI();
     }
 
@@ -190,10 +408,57 @@
         currentLevel = parseInt(selectEl.value) || 1;
         currentRound = [];
         history = [];
+        localStorage.clear();
         updateUI();
       }
     }
 
+    function exportCSV() {
+      if (history.length === 0) return alert("No data to export.");
+      let csv = "Attempt,Timestamp,Level,RoundResult\n";
+      history.forEach((h, i) => {
+        csv += `${i + 1},${h.timestamp},${h.level},${h.roundResult || ''}\n`;
+      });
+      let blob = new Blob([csv], { type: 'text/csv' });
+      let a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `level_tracker_${new Date().toISOString().slice(0,10)}.csv`;
+      a.click();
+    }
+
+    function exportJSON() {
+      if (history.length === 0) return alert("No data to export.");
+      let dataStr = JSON.stringify({ level: currentLevel, round: currentRound, history: history }, null, 2);
+      let blob = new Blob([dataStr], { type: 'application/json' });
+      let a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `level_tracker_backup_${new Date().toISOString().slice(0,10)}.json`;
+      a.click();
+    }
+
+    function importJSON(event) {
+      let file = event.target.files[0];
+      if (!file) return;
+      let reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          let imported = JSON.parse(e.target.result);
+          if (imported.history) {
+            history = imported.history;
+            currentLevel = imported.level || 1;
+            currentRound = imported.round || [];
+            saveData();
+            updateUI();
+            alert("Data imported successfully!");
+          }
+        } catch (err) {
+          alert("Invalid JSON file format.");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    loadSavedData();
     updateUI();
   </script>
 </body>
