@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Level Tracker Pro</title>
+  <!-- External Libraries for Charts and Chart Labels -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
   <style>
@@ -12,8 +13,9 @@
       --card-bg: #ffffff;
       --text-color: #1c1c1e;
       --subtext-color: #666666;
-      --border-color: #cccccc;
-      --stat-bg: #f2f2f7;
+      --border-color: #e5e5ea;
+      --stat-bg: #f8f8fc;
+      --accent-color: #007aff;
     }
 
     body.dark-mode {
@@ -23,6 +25,7 @@
       --subtext-color: #8e8e93;
       --border-color: #38383a;
       --stat-bg: #2c2c2e;
+      --accent-color: #0a84ff;
     }
 
     body {
@@ -35,91 +38,259 @@
       transition: background 0.3s, color 0.3s;
     }
 
-    .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-    .theme-toggle { background: none; border: none; font-size: 22px; cursor: pointer; padding: 4px; }
-    .card { background: var(--card-bg); padding: 18px; border-radius: 12px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); transition: background 0.3s; }
-    .btn { width: 100%; padding: 16px; margin: 6px 0; font-size: 18px; font-weight: bold; border: none; border-radius: 10px; cursor: pointer; }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding: 0 4px;
+    }
+
+    .theme-toggle {
+      background: none;
+      border: none;
+      font-size: 22px;
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 50%;
+    }
+
+    .card {
+      background: var(--card-bg);
+      padding: 18px;
+      border-radius: 14px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+      transition: background 0.3s;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 16px;
+      margin: 6px 0;
+      font-size: 18px;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
     .btn-success { background: #34c759; color: white; }
     .btn-failure { background: #ff3b30; color: white; }
     .btn-secondary { background: #8e8e93; color: white; }
     .btn-danger { background: #ff9500; color: white; }
-    .tries { display: flex; justify-content: center; gap: 12px; font-size: 28px; margin: 12px 0; }
-    .controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 10px; }
-    select { padding: 8px 12px; font-size: 16px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-color); }
-    .row { display: flex; gap: 10px; margin-top: 6px; }
-    .row .btn { flex: 1; padding: 12px; font-size: 15px; }
-    .filter-bar { display: flex; justify-content: center; gap: 8px; margin-bottom: 10px; }
-    .filter-btn { padding: 6px 14px; border: 1px solid #007aff; background: transparent; color: #007aff; border-radius: 15px; font-weight: bold; cursor: pointer; }
-    .filter-btn.active { background: #007aff; color: white; }
-    h2 { font-size: 16px; margin: 0 0 12px 0; color: var(--text-color); }
-    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 14px; }
-    .stat-box { background: var(--stat-bg); padding: 10px; border-radius: 8px; }
-    .stat-val { font-size: 18px; font-weight: bold; color: #007aff; margin-top: 4px; }
+
+    .tries {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      font-size: 28px;
+      margin: 12px 0;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      gap: 10px;
+    }
+
+    select {
+      padding: 8px 12px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: var(--text-color);
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .row .btn {
+      flex: 1;
+      padding: 12px;
+      font-size: 15px;
+    }
+
+    /* Filter buttons for sample size */
+    .filter-bar {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 8px 16px;
+      border: 1px solid var(--accent-color);
+      background: transparent;
+      color: var(--accent-color);
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    .filter-btn.active {
+      background: var(--accent-color);
+      color: white;
+    }
+
+    h2 {
+      font-size: 16px;
+      margin: 0 0 12px 0;
+      color: var(--text-color);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      font-size: 13px;
+    }
+
+    .stat-box {
+      background: var(--stat-bg);
+      padding: 12px 10px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+    }
+
+    .stat-label {
+      color: var(--subtext-color);
+      font-size: 12px;
+    }
+
+    .stat-val {
+      font-size: 20px;
+      font-weight: bold;
+      color: var(--accent-color);
+      margin-top: 4px;
+    }
+
+    /* Scrollable Canvas Container for Horizontal Bar Chart */
+    .chart-scroll-container {
+      width: 100%;
+      overflow-y: auto;
+      max-height: 520px;
+      border-radius: 8px;
+      padding-right: 4px;
+    }
+
+    .chart-inner-wrapper {
+      position: relative;
+      height: 600px; /* Generous height to prevent cramped/scuffed bars */
+      width: 100%;
+    }
+
+    .data-notice {
+      font-size: 11px;
+      color: #34c759;
+      margin-top: 4px;
+      display: none;
+    }
   </style>
 </head>
 <body>
 
-  <div class="header-bar">
-    <span style="font-weight: bold; font-size: 18px;">Level Tracker</span>
-    <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">🌙</button>
-  </div>
-
-  <div class="card">
-    <div class="controls">
-      <label for="start-level"><strong>Start Level:</strong></label>
-      <select id="start-level" onchange="setInitialLevel(this.value)"></select>
+  <div class="container">
+    <!-- Header Bar -->
+    <div class="header-bar">
+      <div style="text-align: left;">
+        <span style="font-weight: bold; font-size: 18px;">Level Tracker Pro</span>
+        <div id="data-notice" class="data-notice">✔ Local Data Loaded</div>
+      </div>
+      <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn" title="Toggle Theme">🌙</button>
     </div>
-    <h1 id="level-display" style="margin: 8px 0;">Level 1</h1>
-    <div style="color: var(--subtext-color); font-size: 14px;">Current 3-Try Round:</div>
-    <div class="tries" id="tries-display">⚪ ⚪ ⚪</div>
-  </div>
 
-  <button class="btn btn-success" onclick="logTry('win')">+ SUCCESS</button>
-  <button class="btn btn-failure" onclick="logTry('loss')">- FAILURE</button>
-
-  <div class="row">
-    <button class="btn btn-secondary" onclick="undo()">Undo Tap</button>
-    <button class="btn btn-danger" onclick="resetApp()">Reset All</button>
-  </div>
-
-  <!-- Summary Stats Card -->
-  <div class="card" style="margin-top: 16px;">
-    <h2>Performance Summary</h2>
-    <div class="stats-grid">
-      <div class="stat-box">Total Taps<div class="stat-val" id="stat-taps">0</div></div>
-      <div class="stat-box">Rounds Played<div class="stat-val" id="stat-rounds">0</div></div>
-      <div class="stat-box">2/2 Clean Rate<div class="stat-val" id="stat-clean">0%</div></div>
-      <div class="stat-box">Highest Level<div class="stat-val" id="stat-max">Lvl 1</div></div>
+    <!-- Active Gameplay Card -->
+    <div class="card">
+      <div class="controls">
+        <label for="start-level"><strong>Start Level:</strong></label>
+        <select id="start-level" onchange="setInitialLevel(this.value)"></select>
+      </div>
+      <h1 id="level-display" style="margin: 8px 0; font-size: 32px;">Level 1</h1>
+      <div style="color: var(--subtext-color); font-size: 14px;">Current 3-Try Round:</div>
+      <div class="tries" id="tries-display">⚪ ⚪ ⚪</div>
     </div>
-  </div>
 
-  <!-- Chart 1: Progression -->
-  <div class="card">
-    <h2>Level Progression Over Time</h2>
-    <div class="filter-bar">
-      <button class="filter-btn" id="f-10" onclick="setFilter(10)">Last 10</button>
-      <button class="filter-btn active" id="f-30" onclick="setFilter(30)">Last 30</button>
-      <button class="filter-btn" id="f-all" onclick="setFilter(0)">All Time</button>
-    </div>
-    <canvas id="progressChart"></canvas>
-  </div>
+    <!-- Logging Buttons -->
+    <button class="btn btn-success" onclick="logTry('win')">+ SUCCESS</button>
+    <button class="btn btn-failure" onclick="logTry('loss')">- FAILURE</button>
 
-  <!-- Chart 2: Efficiency Breakdown -->
-  <div class="card">
-    <h2>Level Efficiency (% of Total Rounds)</h2>
-    <canvas id="breakdownChart" style="height: 380px;"></canvas>
-  </div>
-
-  <!-- Data Management / Backup Card -->
-  <div class="card">
-    <h2>Backup & Data Controls</h2>
     <div class="row">
-      <button class="btn btn-secondary" onclick="exportCSV()">Export CSV</button>
-      <button class="btn btn-secondary" onclick="exportJSON()">Export JSON</button>
+      <button class="btn btn-secondary" onclick="undo()">Undo Tap</button>
+      <button class="btn btn-danger" onclick="resetApp()">Reset All</button>
     </div>
-    <div class="row">
-      <button class="btn btn-secondary" onclick="document.getElementById('file-input').click()">Import Data</button>
-      <input type="file" id="file-input" style="display:none;" onchange="importJSON(event)" accept=".json">
+
+    <!-- Performance Summary Card -->
+    <div class="card" style="margin-top: 16px;">
+      <h2>Performance Summary</h2>
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-label">Total Attempts</div>
+          <div class="stat-val" id="stat-taps">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Rounds Played</div>
+          <div class="stat-val" id="stat-rounds">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Overall Win Rate</div>
+          <div class="stat-val" id="stat-clean">0%</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Highest Level</div>
+          <div class="stat-val" id="stat-max">Lvl 1</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart 1: Progression -->
+    <div class="card">
+      <h2>Level Progression Over Time</h2>
+      <div class="filter-bar">
+        <button class="filter-btn" id="f-50" onclick="setFilter(50)">Last 50</button>
+        <button class="filter-btn active" id="f-200" onclick="setFilter(200)">Last 200</button>
+        <button class="filter-btn" id="f-all" onclick="setFilter(0)">All Time</button>
+      </div>
+      <canvas id="progressChart"></canvas>
+    </div>
+
+    <!-- Chart 2: Level Efficiency / Success Rate -->
+    <div class="card">
+      <h2>Level Efficiency (% of Rounds)</h2>
+      <div class="chart-scroll-container">
+        <div class="chart-inner-wrapper">
+          <canvas id="breakdownChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Backup & Controls Card -->
+    <div class="card">
+      <h2>Backup & Data Controls</h2>
+      <div class="row">
+        <button class="btn btn-secondary" onclick="exportCSV()">Export CSV</button>
+        <button class="btn btn-secondary" onclick="exportJSON()">Export JSON</button>
+      </div>
+      <div class="row">
+        <button class="btn btn-secondary" onclick="document.getElementById('file-input').click()">Import Data</button>
+        <input type="file" id="file-input" style="display:none;" onchange="importJSON(event)" accept=".json">
+      </div>
     </div>
   </div>
 
@@ -129,17 +300,31 @@
     let currentLevel = 1;
     let currentRound = [];
     let history = []; 
-    let displayLimit = 30;
+    let displayLimit = 200; // Updated default filter to handle larger datasets
 
+    // Load saved state (Preserving original localStorage keys to maintain user data across index updates)
     function loadSavedData() {
       const savedHistory = localStorage.getItem('levelTracker_history');
       const savedLevel = localStorage.getItem('levelTracker_level');
       const savedRound = localStorage.getItem('levelTracker_round');
       const savedTheme = localStorage.getItem('levelTracker_theme');
 
-      if (savedHistory) history = JSON.parse(savedHistory);
+      if (savedHistory) {
+        try {
+          history = JSON.parse(savedHistory);
+          if (history.length > 0) {
+            const noticeEl = document.getElementById('data-notice');
+            if (noticeEl) {
+              noticeEl.style.display = 'block';
+              noticeEl.innerText = `✔ ${history.length} attempts loaded`;
+            }
+          }
+        } catch(e) { console.error("Error parsing history", e); }
+      }
       if (savedLevel) currentLevel = parseInt(savedLevel);
-      if (savedRound) currentRound = JSON.parse(savedRound);
+      if (savedRound) {
+        try { currentRound = JSON.parse(savedRound); } catch(e) {}
+      }
       if (savedTheme === 'dark') {
         document.body.classList.add('dark-mode');
         document.getElementById('theme-btn').innerText = '☀️';
@@ -177,14 +362,27 @@
       selectEl.appendChild(opt);
     }
 
-    // Chart 1 Setup
+    // Chart 1: Progression (Smoother line, hidden legend)
     const ctxProgress = document.getElementById('progressChart').getContext('2d');
     const progressChart = new Chart(ctxProgress, {
       type: 'line',
-      data: { labels: [], datasets: [{ label: 'Level', data: [], borderColor: '#007aff', backgroundColor: '#007aff', pointRadius: 3, fill: false, tension: 0.1 }] },
+      data: { 
+        labels: [], 
+        datasets: [{ 
+          label: 'Level', 
+          data: [], 
+          borderColor: '#007aff', 
+          backgroundColor: '#007aff', 
+          pointRadius: 2,
+          pointHoverRadius: 5,
+          fill: false, 
+          tension: 0.4 // Enhanced smoothing curve
+        }] 
+      },
       options: {
         responsive: true,
         plugins: {
+          legend: { display: false }, // Removed redundant 'Level' legend tag
           datalabels: { display: false },
           tooltip: {
             callbacks: {
@@ -193,7 +391,8 @@
                 let entry = items[0].chart.data.fullHistory[idx];
                 let d = new Date(entry.timestamp).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
                 return `Attempt #${entry.attemptNum} (${d})`;
-              }
+              },
+              label: (item) => `Level: ${item.raw}`
             }
           }
         },
@@ -204,24 +403,28 @@
       }
     });
 
-    // Chart 2 Setup
+    // Chart 2: Efficiency Breakdown (Expanded layout, clear spacing)
     const ctxBreakdown = document.getElementById('breakdownChart').getContext('2d');
     const breakdownChart = new Chart(ctxBreakdown, {
       type: 'bar',
       data: {
         labels: Array.from({length: 15}, (_, i) => `Lvl ${i + 1}`),
         datasets: [
-          { label: '2/2 (Clean)', data: Array(15).fill(0), backgroundColor: '#34c759' },
-          { label: '2/3 (Hard)', data: Array(15).fill(0), backgroundColor: '#007aff' },
-          { label: '1/3 (Hold)', data: Array(15).fill(0), backgroundColor: '#ff9500' },
-          { label: '0/3 (Drop)', data: Array(15).fill(0), backgroundColor: '#ff3b30' }
+          { label: '2/2 (Clean Win)', data: Array(15).fill(0), backgroundColor: '#34c759', barPercentage: 0.7, categoryPercentage: 0.8 },
+          { label: '2/3 (Hard Win)', data: Array(15).fill(0), backgroundColor: '#007aff', barPercentage: 0.7, categoryPercentage: 0.8 },
+          { label: '1/3 (Hold)', data: Array(15).fill(0), backgroundColor: '#ff9500', barPercentage: 0.7, categoryPercentage: 0.8 },
+          { label: '0/3 (Drop)', data: Array(15).fill(0), backgroundColor: '#ff3b30', barPercentage: 0.7, categoryPercentage: 0.8 }
         ]
       },
       options: {
         indexAxis: 'y',
         responsive: true,
+        maintainAspectRatio: false, // Allows custom inner-wrapper height for non-cramped display
         plugins: {
-          legend: { labels: { color: getChartTextColor } },
+          legend: { 
+            position: 'top',
+            labels: { color: getChartTextColor, boxWidth: 12, font: { size: 12 } } 
+          },
           datalabels: {
             color: '#fff',
             font: { weight: 'bold', size: 11 },
@@ -231,7 +434,7 @@
               let total = datasets.reduce((sum, ds) => sum + ds.data[ctx.dataIndex], 0);
               if (total === 0) return '';
               let pct = Math.round((value / total) * 100);
-              return pct > 7 ? `${pct}%` : '';
+              return pct >= 8 ? `${pct}%` : ''; // Prevents text overflow on small slices
             }
           },
           tooltip: {
@@ -241,14 +444,14 @@
                 let datasets = context.chart.data.datasets;
                 let total = datasets.reduce((sum, ds) => sum + ds.data[context.dataIndex], 0);
                 let pct = total > 0 ? Math.round((value / total) * 100) : 0;
-                return `${context.dataset.label}: ${value} (${pct}% of ${total} rounds)`;
+                return `${context.dataset.label}: ${value} rounds (${pct}%)`;
               }
             }
           }
         },
         scales: {
           x: { stacked: true, title: { display: true, text: 'Total Rounds Played', color: getChartTextColor }, ticks: { stepSize: 1, color: getChartTextColor }, grid: { color: getChartGridColor } },
-          y: { stacked: true, ticks: { color: getChartTextColor }, grid: { color: getChartGridColor } }
+          y: { stacked: true, ticks: { color: getChartTextColor, font: { weight: 'bold' } }, grid: { color: getChartGridColor } }
         }
       }
     });
@@ -263,7 +466,9 @@
         chart.options.scales.y.ticks.color = textColor;
         chart.options.scales.y.grid.color = gridColor;
         if (chart.options.scales.x.title) chart.options.scales.x.title.color = textColor;
-        if (chart.options.plugins.legend) chart.options.plugins.legend.labels.color = textColor;
+        if (chart.options.plugins.legend && chart.options.plugins.legend.labels) {
+          chart.options.plugins.legend.labels.color = textColor;
+        }
         chart.update();
       });
     }
@@ -271,8 +476,8 @@
     function setFilter(limit) {
       displayLimit = limit;
       document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      if (limit === 10) document.getElementById('f-10').classList.add('active');
-      else if (limit === 30) document.getElementById('f-30').classList.add('active');
+      if (limit === 50) document.getElementById('f-50').classList.add('active');
+      else if (limit === 200) document.getElementById('f-200').classList.add('active');
       else document.getElementById('f-all').classList.add('active');
       updateUI();
     }
@@ -301,7 +506,7 @@
       while (dots.length < 3) dots.push('⚪');
       document.getElementById('tries-display').innerText = dots.join(' ');
 
-      // Update Line Chart
+      // Update Progression Line Chart
       let enrichedHistory = history.map((h, i) => ({ ...h, attemptNum: i + 1 }));
       let visibleHistory = displayLimit > 0 ? enrichedHistory.slice(-displayLimit) : enrichedHistory;
 
@@ -325,7 +530,7 @@
       progressChart.data.fullHistory = visibleHistory;
       progressChart.update();
 
-      // Update Breakdown Chart & Metrics
+      // Update Breakdown Chart & Overall Metrics
       let counts = {
         twoOfTwo: Array(15).fill(0),
         twoOfThree: Array(15).fill(0),
@@ -334,7 +539,7 @@
       };
 
       let completedRounds = 0;
-      let totalTwoOfTwo = 0;
+      let winningRounds = 0; // Total rounds where level advanced (2/2 or 2/3)
       let maxLvl = currentLevel;
 
       history.forEach(entry => {
@@ -342,10 +547,10 @@
         if (entry.roundResult) {
           completedRounds++;
           let lvlIdx = entry.level - 1;
-          if (entry.roundResult === '2/2') { counts.twoOfTwo[lvlIdx]++; totalTwoOfTwo++; }
-          else if (entry.roundResult === '2/3') counts.twoOfThree[lvlIdx]++;
-          else if (entry.roundResult === '1/3') counts.oneOfThree[lvlIdx]++;
-          else if (entry.roundResult === '0/3') counts.zeroOfThree[lvlIdx]++;
+          if (entry.roundResult === '2/2') { counts.twoOfTwo[lvlIdx]++; winningRounds++; }
+          else if (entry.roundResult === '2/3') { counts.twoOfThree[lvlIdx]++; winningRounds++; }
+          else if (entry.roundResult === '1/3') { counts.oneOfThree[lvlIdx]++; }
+          else if (entry.roundResult === '0/3') { counts.zeroOfThree[lvlIdx]++; }
         }
       });
 
@@ -355,10 +560,13 @@
       breakdownChart.data.datasets[3].data = counts.zeroOfThree;
       breakdownChart.update();
 
-      // Summary Box
-      document.getElementById('stat-taps').innerText = history.length;
+      // Update Performance Summary Metrics
+      document.getElementById('stat-taps').innerText = history.length; // Clear label: Total Attempts
       document.getElementById('stat-rounds').innerText = completedRounds;
-      document.getElementById('stat-clean').innerText = completedRounds > 0 ? `${Math.round((totalTwoOfTwo / completedRounds) * 100)}%` : '0%';
+      
+      // Calculate overall win percentage across all completed rounds
+      let winRatePct = completedRounds > 0 ? Math.round((winningRounds / completedRounds) * 100) : 0;
+      document.getElementById('stat-clean').innerText = `${winRatePct}%`;
       document.getElementById('stat-max').innerText = `Lvl ${maxLvl}`;
     }
 
@@ -458,6 +666,7 @@
       reader.readAsText(file);
     }
 
+    // Initialize application on load
     loadSavedData();
     updateUI();
   </script>
