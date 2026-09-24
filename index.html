@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="RDS Tracker">
-  <meta name="theme-color" content="#0d1520">
-  <title>Dr. Dave's RDS Tracker | Billiard University</title>
+  <meta name="apple-mobile-web-app-title" content="Runout Tracker">
+  <meta name="theme-color" content="#0b0f17">
+  <title>Runout Drill Tracker</title>
 
-  <!-- External Libraries for Charts, Datalabels, Touch & Zoom -->
+  <!-- External Libraries: Chart.js, Datalabels, Touch & Zoom -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
@@ -17,46 +17,41 @@
 
   <style>
     :root {
-      --bg-color: #f1f5f9;
+      --bg: #f8fafc;
       --card-bg: #ffffff;
-      --card-sub-bg: #f8fafc;
-      --text-color: #0f172a;
-      --subtext-color: #64748b;
-      --border-color: #e2e8f0;
-      --stat-bg: #f8fafc;
-      --accent-color: #0284c7;
-      --accent-hover: #0369a1;
-      --success-color: #10b981;
-      --success-glow: rgba(16, 185, 129, 0.2);
-      --failure-color: #ef4444;
-      --failure-glow: rgba(239, 68, 68, 0.2);
-      --warning-color: #f59e0b;
-      --info-color: #6366f1;
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
-      --shadow-md: 0 4px 14px rgba(0,0,0,0.07);
-      --radius-sm: 8px;
-      --radius-md: 14px;
-      --radius-lg: 18px;
+      --card-sub: #f1f5f9;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --accent: #2563eb;
+      --accent-soft: #eff6ff;
+      --success: #16a34a;
+      --success-active: #15803d;
+      --success-soft: #f0fdf4;
+      --failure: #dc2626;
+      --failure-active: #b91c1c;
+      --failure-soft: #fef2f2;
+      --warning: #d97706;
+      --radius-sm: 6px;
+      --radius-md: 10px;
     }
 
     body.dark-mode {
-      --bg-color: #0a0f18;
-      --card-bg: #131d2c;
-      --card-sub-bg: #1a273b;
-      --text-color: #f8fafc;
-      --subtext-color: #94a3b8;
-      --border-color: #23344d;
-      --stat-bg: #172336;
-      --accent-color: #38bdf8;
-      --accent-hover: #7dd3fc;
-      --success-color: #22c55e;
-      --success-glow: rgba(34, 197, 94, 0.25);
-      --failure-color: #f87171;
-      --failure-glow: rgba(248, 113, 113, 0.25);
-      --warning-color: #fbbf24;
-      --info-color: #818cf8;
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
-      --shadow-md: 0 4px 20px rgba(0,0,0,0.4);
+      --bg: #0b0f17;
+      --card-bg: #121824;
+      --card-sub: #182232;
+      --border: #222f42;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --accent: #3b82f6;
+      --accent-soft: rgba(59, 130, 246, 0.12);
+      --success: #22c55e;
+      --success-active: #16a34a;
+      --success-soft: rgba(34, 197, 94, 0.12);
+      --failure: #ef4444;
+      --failure-active: #dc2626;
+      --failure-soft: rgba(239, 68, 68, 0.12);
+      --warning: #f59e0b;
     }
 
     * {
@@ -65,92 +60,75 @@
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background: var(--bg-color);
-      color: var(--text-color);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
       margin: 0;
-      padding: calc(12px + env(safe-area-inset-top)) 14px calc(24px + env(safe-area-inset-bottom)) 14px;
+      padding: calc(10px + env(safe-area-inset-top)) 12px calc(24px + env(safe-area-inset-bottom)) 12px;
       line-height: 1.45;
-      transition: background 0.25s ease, color 0.25s ease;
+      font-feature-settings: "cv02", "cv03", "cv04", "cv11";
       -webkit-font-smoothing: antialiased;
+      transition: background 0.2s ease, color 0.2s ease;
     }
 
     .container {
-      max-width: 680px;
+      max-width: 640px;
       margin: 0 auto;
     }
 
-    /* Header Bar */
+    /* Minimalist Header */
     .header-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
-      padding: 4px 2px;
+      margin-bottom: 10px;
+      padding: 2px 2px;
     }
 
     .brand-title {
-      font-size: 19px;
-      font-weight: 800;
-      letter-spacing: -0.4px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      color: var(--text);
     }
 
-    .brand-subtitle {
-      font-size: 11px;
-      color: var(--subtext-color);
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
     .data-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
       font-size: 11px;
-      font-weight: 600;
-      background: rgba(16, 185, 129, 0.15);
-      color: var(--success-color);
-      padding: 2px 8px;
-      border-radius: 12px;
-      margin-top: 3px;
+      font-weight: 500;
+      color: var(--success);
+      background: var(--success-soft);
+      border: 1px solid rgba(22, 163, 74, 0.2);
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
     }
 
-    .icon-btn {
+    .theme-toggle-btn {
       background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      color: var(--text-color);
-      font-size: 18px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 4px 9px;
+      border-radius: var(--radius-sm);
       cursor: pointer;
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s ease;
-      touch-action: manipulation;
-    }
-
-    .icon-btn:active {
-      transform: scale(0.92);
     }
 
     /* Cards */
     .card {
       background: var(--card-bg);
-      padding: 16px;
+      border: 1px solid var(--border);
       border-radius: var(--radius-md);
-      margin-bottom: 14px;
-      border: 1px solid var(--border-color);
-      box-shadow: var(--shadow-sm);
-      transition: background 0.25s, border-color 0.25s;
+      padding: 14px;
+      margin-bottom: 12px;
     }
 
-    .card-title-row {
+    .card-header-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -158,428 +136,386 @@
     }
 
     h2 {
-      font-size: 15px;
+      font-size: 13.5px;
       font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--muted);
       margin: 0;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      color: var(--text-color);
-      letter-spacing: -0.2px;
     }
 
-    /* Active Drill Card */
-    .drill-header {
+    /* Mobile-First Compact Active Drill Card */
+    .gameplay-card {
+      padding: 12px 14px;
+    }
+
+    .level-bar {
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-start;
       gap: 10px;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
-    .drill-select-wrapper {
-      position: relative;
+    .level-info {
       flex: 1;
-    }
-
-    select {
-      width: 100%;
-      padding: 8px 12px;
-      font-size: 14px;
-      font-weight: 600;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border-color);
-      background: var(--card-sub-bg);
-      color: var(--text-color);
-      outline: none;
-      -webkit-appearance: none;
-      appearance: none;
-      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-      background-repeat: no-repeat;
-      background-position: right 10px center;
-      background-size: 16px;
-    }
-
-    .level-hero {
-      text-align: center;
-      padding: 8px 0;
-    }
-
-    .level-num {
-      font-size: 34px;
-      font-weight: 900;
-      letter-spacing: -0.8px;
-      margin: 0;
-      line-height: 1.1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .tier-badge {
-      display: inline-block;
-      font-size: 12px;
-      font-weight: 700;
-      padding: 3px 10px;
-      border-radius: 20px;
-      margin-top: 4px;
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
-    }
-
-    .tier-novice { background: #e0f2fe; color: #0369a1; }
-    .tier-beginner { background: #dcfce7; color: #15803d; }
-    .tier-intermediate { background: #fef3c7; color: #b45309; }
-    .tier-advanced { background: #f3e8ff; color: #7e22ce; }
-    .tier-shortstop { background: #ffe4e6; color: #be123c; }
-    .tier-pro { background: #fef08a; color: #854d0e; }
-
-    body.dark-mode .tier-novice { background: rgba(56, 189, 248, 0.2); color: #7dd3fc; }
-    body.dark-mode .tier-beginner { background: rgba(34, 197, 94, 0.2); color: #86efac; }
-    body.dark-mode .tier-intermediate { background: rgba(245, 158, 11, 0.2); color: #fde68a; }
-    body.dark-mode .tier-advanced { background: rgba(168, 85, 247, 0.2); color: #d8b4fe; }
-    body.dark-mode .tier-shortstop { background: rgba(244, 63, 94, 0.2); color: #fda4af; }
-    body.dark-mode .tier-pro { background: rgba(234, 179, 8, 0.2); color: #fef08a; }
-
-    .drill-desc-box {
-      background: var(--card-sub-bg);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-sm);
-      padding: 10px 12px;
-      margin: 10px 0;
-      font-size: 13px;
       text-align: left;
     }
 
-    .drill-rule-text {
-      font-weight: 600;
-      color: var(--text-color);
-      margin-bottom: 4px;
-    }
-
-    .drill-instructions-toggle {
-      background: none;
-      border: none;
-      color: var(--accent-color);
-      font-size: 11px;
-      font-weight: 700;
-      cursor: pointer;
-      padding: 0;
-      display: inline-flex;
-      align-items: center;
-      gap: 3px;
-    }
-
-    .drill-instructions-list {
-      margin: 6px 0 0 0;
-      padding-left: 18px;
-      font-size: 12px;
-      color: var(--subtext-color);
-      display: none;
-    }
-
-    .drill-instructions-list li {
-      margin-bottom: 2px;
-    }
-
-    /* 3-Rack Attempt Tracker */
-    .round-tracker-box {
-      background: var(--stat-bg);
-      border: 1px dashed var(--border-color);
-      border-radius: var(--radius-sm);
-      padding: 10px;
-      margin: 10px 0 14px 0;
-    }
-
-    .round-meta {
+    .level-title-row {
       display: flex;
-      justify-content: space-between;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--subtext-color);
-      margin-bottom: 6px;
+      align-items: baseline;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
-    .rack-indicators {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 16px;
-      margin: 6px 0;
-    }
-
-    .rack-pill {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .rack-circle {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .level-number {
       font-size: 20px;
-      background: var(--card-bg);
-      border: 2px solid var(--border-color);
-      box-shadow: var(--shadow-sm);
-      transition: all 0.25s ease;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      color: var(--text);
     }
 
-    .rack-circle.pending {
-      color: var(--subtext-color);
-      opacity: 0.5;
-    }
-
-    .rack-circle.win {
-      background: var(--success-color);
-      border-color: var(--success-color);
-      color: #ffffff;
-      box-shadow: 0 0 12px var(--success-glow);
-    }
-
-    .rack-circle.loss {
-      background: var(--failure-color);
-      border-color: var(--failure-color);
-      color: #ffffff;
-      box-shadow: 0 0 12px var(--failure-glow);
-    }
-
-    .rack-label {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--subtext-color);
-    }
-
-    .target-hint {
+    .tier-tag {
       font-size: 11.5px;
       font-weight: 600;
-      color: var(--subtext-color);
-      margin-top: 6px;
+      color: var(--muted);
     }
 
-    /* Logging Big Action Buttons */
-    .action-grid {
+    .level-summary {
+      font-size: 12.5px;
+      color: var(--text);
+      margin-top: 2px;
+      line-height: 1.35;
+    }
+
+    .level-picker-wrapper select {
+      padding: 5px 8px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--card-sub);
+      color: var(--text);
+      outline: none;
+      max-width: 140px;
+    }
+
+    /* Slim 3-Try Status Bar */
+    .round-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--card-sub);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 7px 10px;
+      margin-bottom: 10px;
+      font-size: 12px;
+    }
+
+    .round-dots {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      background: transparent;
+      display: inline-block;
+      transition: all 0.15s ease;
+    }
+
+    .dot.win {
+      background: var(--success);
+      border-color: var(--success);
+    }
+
+    .dot.loss {
+      background: var(--failure);
+      border-color: var(--failure);
+    }
+
+    .round-status-text {
+      flex: 1;
+      text-align: left;
+      font-weight: 500;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Fast, Thumb-Friendly Action Buttons */
+    .action-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 10px;
+      gap: 8px;
+      margin-bottom: 6px;
     }
 
     .btn-action {
       border: none;
-      border-radius: var(--radius-md);
-      padding: 18px 10px;
-      font-size: 16px;
-      font-weight: 800;
-      letter-spacing: 0.2px;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
+      border-radius: var(--radius-sm);
+      padding: 14px 6px;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
       color: #ffffff;
-      box-shadow: var(--shadow-md);
-      transition: transform 0.12s ease, filter 0.2s ease;
+      cursor: pointer;
+      text-align: center;
+      transition: background 0.12s, transform 0.08s;
       touch-action: manipulation;
     }
 
     .btn-action:active {
-      transform: scale(0.96);
+      transform: scale(0.97);
     }
 
-    .btn-runout {
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    .btn-success {
+      background: var(--success);
+    }
+    .btn-success:active {
+      background: var(--success-active);
     }
 
-    .btn-miss {
-      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    .btn-failure {
+      background: var(--failure);
+    }
+    .btn-failure:active {
+      background: var(--failure-active);
     }
 
-    .btn-action .btn-sub {
-      font-size: 11px;
-      font-weight: 500;
-      opacity: 0.9;
-    }
-
-    .utility-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 4px;
+    /* Subtle Utility Links */
+    .utility-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 4px;
     }
 
     .btn-subtle {
-      background: var(--card-sub-bg);
-      border: 1px solid var(--border-color);
-      color: var(--text-color);
-      padding: 10px 12px;
-      font-size: 13px;
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 11.5px;
       font-weight: 600;
-      border-radius: var(--radius-sm);
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      transition: all 0.15s ease;
-      touch-action: manipulation;
+      padding: 4px 6px;
+      border-radius: var(--radius-sm);
     }
 
     .btn-subtle:active {
-      transform: scale(0.97);
-      background: var(--border-color);
+      color: var(--text);
     }
 
-    /* Stats Grid */
-    .stats-grid-4 {
+    .btn-subtle.danger {
+      color: var(--failure);
+      opacity: 0.8;
+    }
+    .btn-subtle.danger:active {
+      opacity: 1;
+    }
+
+    /* Performance Summary Stats */
+    .stats-row {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
+      gap: 8px;
     }
 
     @media (min-width: 480px) {
-      .stats-grid-4 {
+      .stats-row {
         grid-template-columns: repeat(4, 1fr);
       }
     }
 
-    .stat-card {
-      background: var(--stat-bg);
-      border: 1px solid var(--border-color);
+    .stat-box {
+      background: var(--card-sub);
+      border: 1px solid var(--border);
       border-radius: var(--radius-sm);
-      padding: 10px 8px;
-      text-align: center;
+      padding: 8px 10px;
+      text-align: left;
     }
 
     .stat-label {
       font-size: 11px;
       font-weight: 600;
-      color: var(--subtext-color);
+      color: var(--muted);
       text-transform: uppercase;
       letter-spacing: 0.4px;
     }
 
-    .stat-val {
-      font-size: 22px;
-      font-weight: 900;
-      color: var(--text-color);
-      margin-top: 3px;
-      line-height: 1.1;
+    .stat-value {
+      font-size: 19px;
+      font-weight: 800;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+      margin-top: 2px;
     }
 
-    .stat-val.accent { color: var(--accent-color); }
-    .stat-val.success { color: var(--success-color); }
+    .stat-value.accent { color: var(--accent); }
 
     /* Set Outcomes Table */
-    .outcomes-table-container {
-      margin-top: 14px;
-      background: var(--stat-bg);
-      border: 1px solid var(--border-color);
+    .table-wrapper {
+      margin-top: 10px;
+      border: 1px solid var(--border);
       border-radius: var(--radius-sm);
       overflow: hidden;
     }
 
-    .outcomes-table {
+    .data-table {
       width: 100%;
       border-collapse: collapse;
       font-size: 12.5px;
       text-align: left;
     }
 
-    .outcomes-table th {
-      background: var(--card-sub-bg);
-      padding: 8px 10px;
+    .data-table th {
+      background: var(--card-sub);
+      padding: 6px 10px;
       font-size: 11px;
-      font-weight: 700;
-      color: var(--subtext-color);
-      text-transform: uppercase;
-      border-bottom: 1px solid var(--border-color);
+      font-weight: 600;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
     }
 
-    .outcomes-table td {
-      padding: 8px 10px;
-      border-bottom: 1px solid var(--border-color);
+    .data-table td {
+      padding: 7px 10px;
+      border-bottom: 1px solid var(--border);
+      font-variant-numeric: tabular-nums;
     }
 
-    .outcomes-table tr:last-child td {
+    .data-table tr:last-child td {
       border-bottom: none;
     }
 
-    .rate-badge {
-      font-weight: 700;
+    .badge {
+      font-size: 11px;
+      font-weight: 600;
       padding: 2px 6px;
       border-radius: 4px;
-      font-size: 11.5px;
+      display: inline-block;
     }
 
-    .badge-advance { background: rgba(16, 185, 129, 0.15); color: var(--success-color); }
-    .badge-stay { background: rgba(245, 158, 11, 0.15); color: var(--warning-color); }
-    .badge-drop { background: rgba(239, 68, 68, 0.15); color: var(--failure-color); }
+    .badge-advance { background: var(--success-soft); color: var(--success); }
+    .badge-stay { background: rgba(217, 119, 6, 0.12); color: var(--warning); }
+    .badge-drop { background: var(--failure-soft); color: var(--failure); }
 
-    /* Filter Toolbars */
-    .toolbar-row {
+    /* Analytics Section & Metric Cards */
+    .analytics-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    @media (min-width: 520px) {
+      .analytics-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .metric-card {
+      background: var(--card-sub);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      text-align: left;
+    }
+
+    .metric-title {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .metric-number {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text);
+      margin: 3px 0 2px 0;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .metric-summary {
+      font-size: 12px;
+      color: var(--text);
+      line-height: 1.35;
+      margin-bottom: 4px;
+    }
+
+    .metric-elaboration {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.4;
+      border-top: 1px solid var(--border);
+      padding-top: 4px;
+      margin-top: 4px;
+    }
+
+    /* Toolbars & Filter Controls */
+    .filter-row {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
-    .pill-group {
+    .btn-group {
       display: inline-flex;
-      background: var(--card-sub-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 20px;
-      padding: 2px;
-      overflow-x: auto;
-      max-width: 100%;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      background: var(--card-sub);
     }
 
-    .pill-btn {
-      padding: 5px 12px;
-      font-size: 11.5px;
-      font-weight: 700;
+    .btn-toggle {
       border: none;
       background: transparent;
-      color: var(--subtext-color);
-      border-radius: 16px;
+      padding: 4px 9px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
       cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.15s ease;
-      touch-action: manipulation;
+      border-right: 1px solid var(--border);
+      transition: background 0.15s, color 0.15s;
     }
 
-    .pill-btn.active {
-      background: var(--accent-color);
+    .btn-toggle:last-child {
+      border-right: none;
+    }
+
+    .btn-toggle.active {
+      background: var(--accent);
       color: #ffffff;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
     }
 
-    .range-control-row {
+    .slider-row {
       display: flex;
       align-items: center;
       gap: 8px;
-      margin-top: 6px;
-      background: var(--card-sub-bg);
-      border: 1px solid var(--border-color);
-      padding: 6px 10px;
+      background: var(--card-sub);
+      border: 1px solid var(--border);
       border-radius: var(--radius-sm);
-      font-size: 12px;
+      padding: 4px 8px;
+      margin-bottom: 8px;
+      font-size: 11.5px;
     }
 
-    .range-control-row input[type="range"] {
+    .slider-row input[type="range"] {
       flex: 1;
-      accent-color: var(--accent-color);
+      accent-color: var(--accent);
     }
 
-    .chart-action-bar {
+    .chart-controls-bar {
       display: flex;
       justify-content: flex-end;
       align-items: center;
@@ -587,300 +523,195 @@
       margin-bottom: 6px;
     }
 
-    .chart-tool-btn {
-      background: var(--card-sub-bg);
-      border: 1px solid var(--border-color);
-      color: var(--text-color);
-      padding: 3px 8px;
+    .btn-small {
+      background: var(--card-sub);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 3px 7px;
       font-size: 11px;
-      font-weight: 700;
-      border-radius: 6px;
+      font-weight: 600;
+      border-radius: 4px;
       cursor: pointer;
     }
 
-    .chart-tool-btn:active {
-      transform: scale(0.95);
+    .btn-small:active {
+      background: var(--border);
+    }
+
+    /* Selected Point Detail Bar (Off-Canvas, Dismissable, Fixes Mobile Blocking) */
+    .selected-point-bar {
+      display: none;
+      background: var(--accent-soft);
+      border: 1px solid var(--accent);
+      border-radius: var(--radius-sm);
+      padding: 6px 10px;
+      margin-bottom: 8px;
+      font-size: 12px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      text-align: left;
+    }
+
+    .selected-point-bar.show {
+      display: flex;
+    }
+
+    .selected-point-text {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .selected-point-close {
+      background: none;
+      border: none;
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 3px;
+      white-space: nowrap;
     }
 
     /* Chart Containers */
-    .chart-container-rel {
+    .chart-box {
       position: relative;
       width: 100%;
-      min-height: 250px;
-    }
-
-    .efficiency-scroll {
-      width: 100%;
-      overflow-x: hidden;
-      border-radius: var(--radius-sm);
+      min-height: 240px;
     }
 
     .efficiency-wrapper {
       position: relative;
       width: 100%;
-      min-height: 260px;
-    }
-
-    /* Competency & Variance Card */
-    .competency-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-    }
-
-    @media (min-width: 520px) {
-      .competency-grid {
-        grid-template-columns: 1fr 1fr;
-      }
-    }
-
-    .insight-card {
-      background: var(--card-sub-bg);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-sm);
-      padding: 12px;
-      text-align: left;
-    }
-
-    .insight-title {
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--subtext-color);
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .insight-hero {
-      font-size: 20px;
-      font-weight: 900;
-      color: var(--text-color);
-      margin: 4px 0 2px 0;
-    }
-
-    .insight-desc {
-      font-size: 12px;
-      color: var(--subtext-color);
-      line-height: 1.35;
+      min-height: 240px;
     }
 
     /* Data Management */
     .data-btn-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px;
+      gap: 6px;
     }
 
-    .footer-note {
-      text-align: center;
-      font-size: 11.5px;
-      color: var(--subtext-color);
-      margin-top: 20px;
-      line-height: 1.5;
-    }
-
-    /* Modal / Drawer for Drill Guide */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.65);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-    }
-
-    .modal-overlay.open {
-      display: flex;
-    }
-
-    .modal-box {
-      background: var(--card-bg);
-      width: 100%;
-      max-width: 580px;
-      max-height: 85vh;
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border-color);
-      padding: 18px;
-      display: flex;
-      flex-direction: column;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-bottom: 10px;
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    .modal-body {
-      overflow-y: auto;
-      padding: 12px 2px;
-      font-size: 13px;
-      text-align: left;
-    }
-
-    .level-guide-item {
-      padding: 10px;
+    .btn-data {
+      background: var(--card-sub);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 10px;
+      font-size: 12px;
+      font-weight: 600;
       border-radius: var(--radius-sm);
-      background: var(--card-sub-bg);
-      border: 1px solid var(--border-color);
-      margin-bottom: 8px;
+      cursor: pointer;
+      text-align: center;
     }
 
-    .level-guide-item.active {
-      border-color: var(--accent-color);
-      background: rgba(56, 189, 248, 0.08);
+    .btn-data:active {
+      background: var(--border);
     }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <!-- Top Header -->
+    <!-- Clean Minimal Header -->
     <header class="header-bar">
       <div>
-        <div class="brand-title">
-          <span>🎱 RDS Tracker</span>
-          <span style="font-size: 11px; font-weight: 700; opacity: 0.6;">v2.0</span>
-        </div>
-        <div class="brand-subtitle">Dr. Dave · Billiard University</div>
-        <div id="data-notice" class="data-pill" style="display: none;">
-          <span>✔</span> <span id="data-notice-text">Local Data Loaded</span>
-        </div>
+        <span class="brand-title">Runout Drill Tracker</span>
       </div>
-      <div style="display: flex; gap: 8px;">
-        <button class="icon-btn" onclick="openDrillGuideModal()" title="Drill Rules & Rating Guide">📖</button>
-        <button class="icon-btn" onclick="toggleTheme()" id="theme-btn" title="Toggle Dark/Light Mode">🌙</button>
+      <div class="header-actions">
+        <div id="data-notice" class="data-pill" style="display: none;">
+          <span id="data-notice-text">Data Loaded</span>
+        </div>
+        <button class="theme-toggle-btn" onclick="toggleTheme()" id="theme-btn">Dark</button>
       </div>
     </header>
 
-    <!-- Active Gameplay Card -->
-    <div class="card" id="gameplay-card">
-      <div class="drill-header">
-        <label for="start-level" style="font-size: 13px; font-weight: 700;">Level:</label>
-        <div class="drill-select-wrapper">
+    <!-- Compact Mobile-First Gameplay Card -->
+    <div class="card gameplay-card">
+      <div class="level-bar">
+        <div class="level-info">
+          <div class="level-title-row">
+            <span class="level-number" id="level-display">Level 1</span>
+            <span class="tier-tag" id="level-tier-badge">Lower Novice</span>
+          </div>
+          <div class="level-summary" id="drill-summary-text">6 balls, pocket object balls directly with no cue ball.</div>
+        </div>
+        <div class="level-picker-wrapper">
           <select id="start-level" onchange="setInitialLevel(this.value)"></select>
         </div>
       </div>
 
-      <div class="level-hero">
-        <h1 class="level-num" id="level-display">Level 1</h1>
-        <div class="tier-badge tier-novice" id="level-tier-badge">Lower Novice</div>
-      </div>
-
-      <!-- Level Drill Specs Box -->
-      <div class="drill-desc-box">
-        <div class="drill-rule-text" id="drill-summary-text">6 balls, pocket OBs directly with no CB.</div>
-        <button class="drill-instructions-toggle" onclick="toggleDrillDetails()">
-          <span id="drill-toggle-arrow">▸</span> Drill Rules & BIH Details
-        </button>
-        <ul class="drill-instructions-list" id="drill-details-list"></ul>
-      </div>
-
-      <!-- 3-Rack Attempt Progress Box -->
-      <div class="round-tracker-box">
-        <div class="round-meta">
-          <span>Current 3-Rack Set:</span>
-          <span id="set-target-hint">Advance with 2 wins (2/2 or 2/3)</span>
+      <!-- Slim 3-Try Status Bar -->
+      <div class="round-bar">
+        <div class="round-dots">
+          <span class="dot" id="rack-dot-0"></span>
+          <span class="dot" id="rack-dot-1"></span>
+          <span class="dot" id="rack-dot-2"></span>
         </div>
-        <div class="rack-indicators">
-          <div class="rack-pill">
-            <div class="rack-circle pending" id="rack-dot-0">1</div>
-            <span class="rack-label">Rack 1</span>
-          </div>
-          <div class="rack-pill">
-            <div class="rack-circle pending" id="rack-dot-1">2</div>
-            <span class="rack-label">Rack 2</span>
-          </div>
-          <div class="rack-pill">
-            <div class="rack-circle pending" id="rack-dot-2">3</div>
-            <span class="rack-label">Rack 3</span>
-          </div>
-        </div>
-        <div class="target-hint" id="rack-status-text">Rack 1 of 3: Shoot to run out the rack.</div>
+        <div class="round-status-text" id="rack-status-text">Rack 1 of 3: Need 2 wins to advance</div>
       </div>
 
-      <!-- Primary Touch Action Buttons -->
-      <div class="action-grid">
-        <button class="btn-action btn-runout" onclick="logTry('win')">
-          <span>+ RACK RUNOUT</span>
-          <span class="btn-sub">Cleared with no miss/foul</span>
-        </button>
-        <button class="btn-action btn-miss" onclick="logTry('loss')">
-          <span>- MISS / SCRATCH</span>
-          <span class="btn-sub">Miss, scratch or foul</span>
-        </button>
+      <!-- Large Thumb-Friendly Action Buttons -->
+      <div class="action-row">
+        <button class="btn-action btn-success" onclick="logTry('win')">+ SUCCESS</button>
+        <button class="btn-action btn-failure" onclick="logTry('loss')">- FAILURE</button>
       </div>
 
-      <div class="utility-row">
-        <button class="btn-subtle" onclick="undo()">
-          <span>↺ Undo Shot</span>
-        </button>
-        <button class="btn-subtle" onclick="resetApp()" style="color: var(--failure-color);">
-          <span>⚠️ Reset Drill</span>
-        </button>
+      <!-- Subtle Utility Links -->
+      <div class="utility-bar">
+        <button class="btn-subtle" onclick="undo()">Undo</button>
+        <button class="btn-subtle danger" onclick="resetApp()">Reset</button>
       </div>
     </div>
 
-    <!-- Performance Summary Card (Requirement 4) -->
+    <!-- Performance Summary Card -->
     <div class="card">
-      <div class="card-title-row">
-        <h2>📊 Performance Summary</h2>
+      <div class="card-header-row">
+        <h2>Performance Summary</h2>
       </div>
-      <div class="stats-grid-4">
-        <div class="stat-card">
+      <div class="stats-row">
+        <div class="stat-box">
           <div class="stat-label">Total Racks</div>
-          <div class="stat-val" id="stat-attempts">0</div>
+          <div class="stat-value" id="stat-attempts">0</div>
         </div>
-        <div class="stat-card">
-          <div class="stat-label">Rack Success Rate</div>
-          <div class="stat-val accent" id="stat-rack-rate">0.0%</div>
+        <div class="stat-box">
+          <div class="stat-label">Rack Success</div>
+          <div class="stat-value accent" id="stat-rack-rate">0.0%</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-box">
           <div class="stat-label">Sets Played</div>
-          <div class="stat-val" id="stat-sets">0</div>
+          <div class="stat-value" id="stat-sets">0</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-box">
           <div class="stat-label">Peak Level</div>
-          <div class="stat-val success" id="stat-peak">Lvl 1</div>
+          <div class="stat-value" id="stat-peak">Lvl 1</div>
         </div>
       </div>
 
-      <!-- Set / Challenge Outcomes Table (Win, Draw, Loss) -->
-      <div class="outcomes-table-container">
-        <table class="outcomes-table">
+      <!-- Set Outcomes Table (Requirement Column Removed) -->
+      <div class="table-wrapper">
+        <table class="data-table">
           <thead>
             <tr>
-              <th>Set Result</th>
-              <th>Requirement</th>
+              <th>Set Outcome</th>
               <th>Sets</th>
               <th>Rate (%)</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td><span class="rate-badge badge-advance">▲ Advance (Win)</span></td>
-              <td>2 of 3 racks (2/2 or 2/3)</td>
+              <td><span class="badge badge-advance">Advance (Win)</span></td>
               <td id="table-advance-count">0</td>
               <td id="table-advance-rate">0.0%</td>
             </tr>
             <tr>
-              <td><span class="rate-badge badge-stay">◼ Stay (Draw)</span></td>
-              <td>1 of 3 racks</td>
+              <td><span class="badge badge-stay">Stay (Hold)</span></td>
               <td id="table-stay-count">0</td>
               <td id="table-stay-rate">0.0%</td>
             </tr>
             <tr>
-              <td><span class="rate-badge badge-drop">▼ Drop (Loss)</span></td>
-              <td>0 of 3 racks</td>
+              <td><span class="badge badge-drop">Drop (Loss)</span></td>
               <td id="table-drop-count">0</td>
               <td id="table-drop-rate">0.0%</td>
             </tr>
@@ -889,143 +720,141 @@
       </div>
     </div>
 
-    <!-- Statistical Competency & Variance Analysis (Requirement 10) -->
+    <!-- Analytics & Variance Section (With Clear Numerical Elaborations) -->
     <div class="card">
-      <div class="card-title-row">
-        <h2>🎯 Competency & Pool Variance Analytics</h2>
+      <div class="card-header-row">
+        <h2>Analytics & Variance</h2>
       </div>
-      <div class="competency-grid">
-        <div class="insight-card">
-          <div class="insight-title">
-            <span>Difficulty-Adjusted Rating</span>
-            <span>⭐</span>
+      <div class="analytics-grid">
+        <div class="metric-card">
+          <div class="metric-title">Promotion Benchmark (61.8%)</div>
+          <div class="metric-number" id="ana-threshold">0.0%</div>
+          <div class="metric-summary" id="ana-threshold-desc">Runout rate at current level vs required advance rate.</div>
+          <div class="metric-elaboration">
+            <strong>Why 61.8%?</strong> In a 3-try format where advancing requires 2 wins, the binomial break-even threshold is mathematically 61.8%. Above 61.8%, promotion is mathematically favored; between 35%–61%, you will hold; below 35%, demotion is likely.
           </div>
-          <div class="insight-hero" id="ana-rating">Level 1.0</div>
-          <div class="insight-desc" id="ana-rating-desc">Estimated True Skill factoring level difficulty and conversion.</div>
         </div>
 
-        <div class="insight-card">
-          <div class="insight-title">
-            <span>Promotion Benchmark (61.8%)</span>
-            <span>🎯</span>
+        <div class="metric-card">
+          <div class="metric-title">Variance & Volatility</div>
+          <div class="metric-number" id="ana-variance">0.00</div>
+          <div class="metric-summary" id="ana-variance-desc">Standard deviation over recent 35 racks.</div>
+          <div class="metric-elaboration">
+            <strong>What the number means:</strong> Measures level fluctuations caused by break spreads and table rolls. Under &plusmn;0.7 indicates high skill consistency; &plusmn;0.7 to 1.4 reflects normal pool table luck; over &plusmn;1.4 indicates high streakiness.
           </div>
-          <div class="insight-hero" id="ana-threshold">0.0%</div>
-          <div class="insight-desc" id="ana-threshold-desc">At current level vs mathematically required 61.8% break-even runout rate.</div>
         </div>
 
-        <div class="insight-card">
-          <div class="insight-title">
-            <span>Variance & Volatility</span>
-            <span>🎲</span>
+        <div class="metric-card">
+          <div class="metric-title">Momentum & Trend</div>
+          <div class="metric-number" id="ana-momentum">0.00</div>
+          <div class="metric-summary" id="ana-momentum-desc">Recent form relative to baseline.</div>
+          <div class="metric-elaboration">
+            <strong>What the number means:</strong> Compares your recent average level (last 25% of attempts) against your prior baseline (75%). A positive score (+0.5+) shows upward progress; negative scores often signal session fatigue.
           </div>
-          <div class="insight-hero" id="ana-variance">Low (±0.0)</div>
-          <div class="insight-desc" id="ana-variance-desc">Measures streakiness and table luck vs genuine skill level stability.</div>
         </div>
 
-        <div class="insight-card">
-          <div class="insight-title">
-            <span>Momentum & Form</span>
-            <span>📈</span>
+        <div class="metric-card">
+          <div class="metric-title">Difficulty-Adjusted Rating</div>
+          <div class="metric-number" id="ana-rating">Lvl 1.0</div>
+          <div class="metric-summary" id="ana-rating-desc">Estimated true skill level.</div>
+          <div class="metric-elaboration">
+            <strong>How it is calculated:</strong> Normalizes difficulty since higher levels require vastly tighter cue ball precision: Level + 2.5 &times; (WinRate &minus; 0.50).
           </div>
-          <div class="insight-hero" id="ana-momentum">Steady (0.0)</div>
-          <div class="insight-desc" id="ana-momentum-desc">Recent performance trend compared to historical baseline.</div>
         </div>
       </div>
     </div>
 
-    <!-- Chart 1: Progression Over Time (Requirements 5, 6, 8) -->
+    <!-- Chart 1: Progression Over Time -->
     <div class="card">
-      <div class="card-title-row">
-        <h2>📈 Level Progression & Skill Trajectory</h2>
+      <div class="card-header-row">
+        <h2>Progression</h2>
       </div>
 
       <!-- Presets & Date Filters -->
-      <div class="toolbar-row">
-        <div class="pill-group" id="filter-presets">
-          <button class="pill-btn" onclick="setAttemptPreset(30)">Last 30</button>
-          <button class="pill-btn" onclick="setAttemptPreset(50)">Last 50</button>
-          <button class="pill-btn" onclick="setAttemptPreset(100)">Last 100</button>
-          <button class="pill-btn active" onclick="setAttemptPreset(200)">Last 200</button>
-          <button class="pill-btn" onclick="setAttemptPreset(0)">All</button>
+      <div class="filter-row">
+        <div class="btn-group" id="filter-presets">
+          <button class="btn-toggle" onclick="setAttemptPreset(30)">30</button>
+          <button class="btn-toggle" onclick="setAttemptPreset(50)">50</button>
+          <button class="btn-toggle" onclick="setAttemptPreset(100)">100</button>
+          <button class="btn-toggle active" onclick="setAttemptPreset(200)">200</button>
+          <button class="btn-toggle" onclick="setAttemptPreset(0)">All</button>
         </div>
 
-        <div class="pill-group" id="date-presets">
-          <button class="pill-btn active" onclick="setDateFilter('all')">All Dates</button>
-          <button class="pill-btn" onclick="setDateFilter('today')">Today</button>
-          <button class="pill-btn" onclick="setDateFilter('7d')">7 Days</button>
-          <button class="pill-btn" onclick="setDateFilter('30d')">30 Days</button>
+        <div class="btn-group" id="date-presets">
+          <button class="btn-toggle active" onclick="setDateFilter('all')">All</button>
+          <button class="btn-toggle" onclick="setDateFilter('today')">Today</button>
+          <button class="btn-toggle" onclick="setDateFilter('7d')">7d</button>
+          <button class="btn-toggle" onclick="setDateFilter('30d')">30d</button>
         </div>
       </div>
 
-      <!-- Dynamic Attempt Slider (Requirement 6) -->
-      <div class="range-control-row">
-        <label for="attempt-slider" style="font-weight: 700; white-space: nowrap;">Window:</label>
+      <!-- Dynamic Attempt Slider -->
+      <div class="slider-row">
+        <label for="attempt-slider" style="color: var(--muted); font-weight: 600;">Window:</label>
         <input type="range" id="attempt-slider" min="10" max="200" value="200" oninput="onSliderChange(this.value)">
-        <span id="slider-label" style="font-weight: 700; min-width: 75px; text-align: right;">Last 200</span>
+        <span id="slider-label" style="font-weight: 700; min-width: 60px; text-align: right;">200</span>
       </div>
 
-      <!-- Chart Zoom Controls & Scale Toggle (Requirements 5 & 8) -->
-      <div class="chart-action-bar" style="margin-top: 8px;">
-        <button class="chart-tool-btn" id="btn-scale-toggle" onclick="toggleAutoFitScale()">Scale: Auto-Fit (Tight)</button>
-        <button class="chart-tool-btn" onclick="zoomProgressChart(1.2)">🔍+ Zoom In</button>
-        <button class="chart-tool-btn" onclick="zoomProgressChart(0.8)">🔍- Zoom Out</button>
-        <button class="chart-tool-btn" onclick="resetProgressZoom()">↺ Reset</button>
+      <!-- Zoom Controls & Scale Toggle -->
+      <div class="chart-controls-bar">
+        <button class="btn-small" id="btn-scale-toggle" onclick="toggleAutoFitScale()">Scale: Auto-Fit</button>
+        <button class="btn-small" onclick="zoomProgressChart(1.2)">Zoom +</button>
+        <button class="btn-small" onclick="zoomProgressChart(0.8)">Zoom -</button>
+        <button class="btn-small" onclick="resetProgressZoom()">Reset</button>
       </div>
 
-      <div class="chart-container-rel">
+      <!-- Dismissable Detail Bar (Fixes Canvas Tooltip Blocking Graph on Mobile) -->
+      <div id="selected-point-bar" class="selected-point-bar">
+        <span id="selected-point-text" class="selected-point-text"></span>
+        <button class="selected-point-close" onclick="clearProgressSelection()">Dismiss</button>
+      </div>
+
+      <div class="chart-box">
         <canvas id="progressChart"></canvas>
       </div>
-      <div style="font-size: 11px; color: var(--subtext-color); margin-top: 6px; text-align: right;">
-        Tip: Touch/pinch or drag horizontally on the graph to zoom & explore attempts.
+    </div>
+
+    <!-- Chart 2: Level Efficiency -->
+    <div class="card">
+      <div class="card-header-row">
+        <h2>Level Efficiency</h2>
+      </div>
+
+      <!-- Controls -->
+      <div class="filter-row">
+        <div class="btn-group">
+          <button class="btn-toggle active" id="eff-filter-active" onclick="toggleEfficiencyUnplayed(false)">Played Only</button>
+          <button class="btn-toggle" id="eff-filter-all" onclick="toggleEfficiencyUnplayed(true)">All 16</button>
+        </div>
+
+        <div class="btn-group">
+          <button class="btn-toggle active" id="eff-mode-count" onclick="setEfficiencyMode('count')">Counts</button>
+          <button class="btn-toggle" id="eff-mode-pct" onclick="setEfficiencyMode('pct')">100% Normalized</button>
+        </div>
+      </div>
+
+      <div class="chart-controls-bar">
+        <button class="btn-small" onclick="zoomEfficiencyChart(1.2)">Zoom +</button>
+        <button class="btn-small" onclick="zoomEfficiencyChart(0.8)">Zoom -</button>
+        <button class="btn-small" onclick="resetEfficiencyZoom()">Reset</button>
+      </div>
+
+      <div class="efficiency-wrapper" id="eff-wrapper">
+        <canvas id="breakdownChart"></canvas>
       </div>
     </div>
 
-    <!-- Chart 2: Level Efficiency / Breakdown (Requirements 5 & 6 Debugged) -->
+    <!-- Detailed Level Matrix Table -->
     <div class="card">
-      <div class="card-title-row">
-        <h2>🎯 Level Conversion Efficiency</h2>
-      </div>
-
-      <!-- Efficiency Controls -->
-      <div class="toolbar-row">
-        <div class="pill-group">
-          <button class="pill-btn active" id="eff-filter-active" onclick="toggleEfficiencyUnplayed(false)">Active Levels Only</button>
-          <button class="pill-btn" id="eff-filter-all" onclick="toggleEfficiencyUnplayed(true)">All 16 Levels</button>
-        </div>
-
-        <div class="pill-group">
-          <button class="pill-btn active" id="eff-mode-count" onclick="setEfficiencyMode('count')">Set Counts</button>
-          <button class="pill-btn" id="eff-mode-pct" onclick="setEfficiencyMode('pct')">100% Normalized</button>
-        </div>
-      </div>
-
-      <div class="chart-action-bar">
-        <button class="chart-tool-btn" onclick="zoomEfficiencyChart(1.2)">🔍+ Zoom In</button>
-        <button class="chart-tool-btn" onclick="zoomEfficiencyChart(0.8)">🔍- Zoom Out</button>
-        <button class="chart-tool-btn" onclick="resetEfficiencyZoom()">↺ Reset</button>
-      </div>
-
-      <div class="efficiency-scroll">
-        <div class="efficiency-wrapper" id="eff-wrapper">
-          <canvas id="breakdownChart"></canvas>
-        </div>
-      </div>
-      <div style="font-size: 11px; color: var(--subtext-color); margin-top: 6px; text-align: right;">
-        Tip: Clean layout prevents label crowding on levels with few attempts.
-      </div>
-    </div>
-
-    <!-- Level-by-Level Matrix Table -->
-    <div class="card">
-      <div class="card-title-row">
-        <h2>📋 Detailed Level Performance Matrix</h2>
-        <button class="chart-tool-btn" onclick="toggleMatrixTable()" id="matrix-toggle-btn">Hide Table</button>
+      <div class="card-header-row">
+        <h2>Level Matrix</h2>
+        <button class="btn-small" onclick="toggleMatrixTable()" id="matrix-toggle-btn">Hide</button>
       </div>
       <div id="matrix-table-wrapper" style="overflow-x: auto;">
-        <table class="outcomes-table" style="font-size: 12px;">
+        <table class="data-table" style="font-size: 11.5px;">
           <thead>
             <tr>
-              <th>Level & Rating</th>
+              <th>Level</th>
               <th>Racks</th>
               <th>Rack %</th>
               <th>Sets</th>
@@ -1040,284 +869,69 @@
       </div>
     </div>
 
-    <!-- Backup, Data & GitHub Sync Controls (Requirements 7 & 9) -->
+    <!-- Data & Backup Controls -->
     <div class="card">
-      <div class="card-title-row">
-        <h2>💾 Backup & Data Synchronization</h2>
+      <div class="card-header-row">
+        <h2>Data & Backup</h2>
       </div>
-      <p style="font-size: 12px; color: var(--subtext-color); margin: 0 0 10px 0; text-align: left;">
-        Your practice data is securely saved in your browser's persistent storage. Updating the HTML on GitHub Pages preserves your local data automatically.
-      </p>
       <div class="data-btn-grid">
-        <button class="btn-subtle" onclick="exportJSON()">📥 Export JSON</button>
-        <button class="btn-subtle" onclick="exportCSV()">📊 Export CSV</button>
-        <button class="btn-subtle" onclick="document.getElementById('file-input').click()">📤 Import JSON</button>
-        <button class="btn-subtle" onclick="checkSyncStatus()">🔄 Check Data Health</button>
+        <button class="btn-data" onclick="exportJSON()">Export JSON</button>
+        <button class="btn-data" onclick="exportCSV()">Export CSV</button>
+        <button class="btn-data" onclick="document.getElementById('file-input').click()">Import JSON</button>
+        <button class="btn-data" onclick="checkSyncStatus()">Storage Health</button>
       </div>
       <input type="file" id="file-input" style="display:none;" onchange="importJSON(event)" accept=".json">
-    </div>
-
-    <div class="footer-note">
-      Dr. Dave's Runout Drill System (RDS) · BilliardUniversity.org Exam IV<br>
-      Optimized for iOS Mobile Web & PWA · Zero external data loss on GitHub updates
-    </div>
-  </div>
-
-  <!-- Drill Guide & Rating Modal -->
-  <div class="modal-overlay" id="drill-guide-modal" onclick="if(event.target === this) closeDrillGuideModal()">
-    <div class="modal-box">
-      <div class="modal-header">
-        <h2 style="font-size: 16px;">📖 Dr. Dave RDS Reference Guide</h2>
-        <button class="icon-btn" onclick="closeDrillGuideModal()" style="width:30px;height:30px;font-size:14px;">✕</button>
-      </div>
-      <div class="modal-body" id="modal-level-list"></div>
     </div>
   </div>
 
   <script>
-    // Register Chart.js Plugins
     Chart.register(ChartDataLabels);
     if (window.ChartZoom) {
       Chart.register(window.ChartZoom);
     }
 
     // ==========================================
-    // 16 Official RDS Levels Metadata (PDF Source)
+    // 16 Official Drill Levels Metadata
     // ==========================================
-    const RDS_LEVELS = [
-      {
-        level: 1,
-        title: "Optional: 6 Balls Direct",
-        rating: "Lower Novice",
-        tier: "Novice",
-        balls: 6,
-        summary: "6 balls, pocket object balls directly with no cue ball.",
-        details: [
-          "Break a rack of 6 balls.",
-          "Remove the cue ball.",
-          "Pocket each object ball directly, in any order.",
-          "Wipe chalk marks off the balls when done."
-        ]
-      },
-      {
-        level: 2,
-        title: "6 Balls, BIH Every Shot",
-        rating: "Mid Novice",
-        tier: "Novice",
-        balls: 6,
-        summary: "6 balls, any order, ball-in-hand (BIH) on every single shot.",
-        details: [
-          "Break a rack of 6 balls.",
-          "Take cue ball in hand for each shot.",
-          "Pocket each ball in any order."
-        ]
-      },
-      {
-        level: 3,
-        title: "6 Balls, 3 Extra BIHs",
-        rating: "Upper Novice",
-        tier: "Novice",
-        balls: 6,
-        summary: "6 balls, any order, BIH after break + 3 extra BIHs anytime.",
-        details: [
-          "Break a rack of 6 balls.",
-          "Take cue ball in hand after the break and any 3 other times during the run.",
-          "Pocket each ball in any order."
-        ]
-      },
-      {
-        level: 4,
-        title: "6 Balls, 2 Extra BIHs",
-        rating: "Lower Beginner (D-)",
-        tier: "Beginner",
-        balls: 6,
-        summary: "6 balls, any order, BIH after break + 2 extra BIHs anytime.",
-        details: [
-          "Break a rack of 6 balls.",
-          "Take cue ball in hand after the break and any 2 other times during the run.",
-          "Pocket each ball in any order."
-        ]
-      },
-      {
-        level: 5,
-        title: "6 Balls, 1 Extra BIH",
-        rating: "Mid Beginner (D)",
-        tier: "Beginner",
-        balls: 6,
-        summary: "6 balls, any order, BIH after break + 1 extra BIH anytime.",
-        details: [
-          "Break a rack of 6 balls.",
-          "Take cue ball in hand after the break and once any time during the run.",
-          "Pocket each ball in any order."
-        ]
-      },
-      {
-        level: 6,
-        title: "7 Balls (8-Ball), 1 Extra BIH",
-        rating: "Upper Beginner (D+)",
-        tier: "Beginner",
-        balls: 7,
-        summary: "7 balls (3 solids, 3 stripes, 8), 8-ball rules, 1 extra BIH.",
-        details: [
-          "Break a rack of 6 balls (3 solids, 3 stripes) with 8-ball added.",
-          "Play standard 8-ball rules: BIH after break + once anytime during the run.",
-          "Pocket all stripes or all solids, then the 8."
-        ]
-      },
-      {
-        level: 7,
-        title: "9 Balls, 1 Extra BIH",
-        rating: "Lower Intermediate (C-)",
-        tier: "Intermediate",
-        balls: 9,
-        summary: "9 balls, any order, BIH after break + 1 extra BIH anytime.",
-        details: [
-          "Break a rack of 9 balls.",
-          "Take cue ball in hand after the break and once any time during the run.",
-          "Pocket each ball in any order."
-        ]
-      },
-      {
-        level: 8,
-        title: "9 Balls (8-Ball), 1 Extra BIH",
-        rating: "Mid Intermediate (C)",
-        tier: "Intermediate",
-        balls: 9,
-        summary: "9 balls (4 solids, 4 stripes, 8), 8-ball rules, 1 extra BIH.",
-        details: [
-          "Break a rack of 9 balls (4 solids, 4 stripes, 8 in center).",
-          "Play standard 8-ball rules: BIH after break + once anytime during the run.",
-          "Pocket all stripes or all solids, then the 8."
-        ]
-      },
-      {
-        level: 9,
-        title: "15 Balls, 2 Extra BIHs",
-        rating: "Upper Intermediate (C+)",
-        tier: "Intermediate",
-        balls: 15,
-        summary: "15 balls, any order, BIH after break + 2 extra BIHs anytime.",
-        details: [
-          "Break a rack of 15 balls.",
-          "Take cue ball in hand after the break and any 2 other times during the run.",
-          "Pocket each ball in any order."
-        ]
-      },
-      {
-        level: 10,
-        title: "6 Balls In Rotation",
-        rating: "Lower Advanced (B-)",
-        tier: "Advanced",
-        balls: 6,
-        summary: "6 balls in numerical rotation, BIH after break.",
-        details: [
-          "Break a rack of 6 balls.",
-          "Take cue ball in hand after the break.",
-          "Shoot the balls in rotation, always hitting the lowest-numbered ball 1st."
-        ]
-      },
-      {
-        level: 11,
-        title: "15 Balls Any Order",
-        rating: "Mid Advanced (B)",
-        tier: "Advanced",
-        balls: 15,
-        summary: "15 balls, any order, BIH after break only.",
-        details: [
-          "Break a rack of 15 balls.",
-          "Take cue ball in hand after the break.",
-          "Pocket each ball in any order."
-        ]
-      },
-      {
-        level: 12,
-        title: "15 Balls 8-Ball Rules",
-        rating: "Upper Advanced (B+)",
-        tier: "Advanced",
-        balls: 15,
-        summary: "15 balls, standard 8-ball rules, BIH after break.",
-        details: [
-          "Break a rack of 15 balls.",
-          "Standard 8-ball rules: BIH after break.",
-          "Pocket all stripes or all solids, then the 8 in called pocket."
-        ]
-      },
-      {
-        level: 13,
-        title: "9 Balls 8-Ball + Rotation",
-        rating: "Lower Shortstop (A-)",
-        tier: "Shortstop",
-        balls: 9,
-        summary: "9 balls (4s, 4s, 8): run suit + 8, then remaining balls in rotation.",
-        details: [
-          "Break rack of 9 balls (4 solids, 4 stripes, 8 in center).",
-          "Play standard 8-ball rules: BIH after break. Pocket suit, then 8.",
-          "Then pocket remaining balls in rotation (lowest-numbered ball 1st)."
-        ]
-      },
-      {
-        level: 14,
-        title: "9 Balls 9-Ball Rules",
-        rating: "Upper Shortstop (A)",
-        tier: "Shortstop",
-        balls: 9,
-        summary: "Standard 9-ball rules in rotation, BIH after break.",
-        details: [
-          "Break a rack of 9 balls.",
-          "Standard 9-ball rules: BIH after break.",
-          "Shoot in rotation. Pocketing the 9 legally anytime is a win."
-        ]
-      },
-      {
-        level: 15,
-        title: "15 Balls 8-Ball + Rotation",
-        rating: "Semipro / Pro (A+/AA)",
-        tier: "Pro",
-        balls: 15,
-        summary: "15 balls: run suit + 8, then remaining 7 balls in rotation.",
-        details: [
-          "Break a rack of 15 balls.",
-          "Play standard 8-ball rules: BIH after break. Pocket suit, then 8.",
-          "Then pocket remaining balls in rotation (lowest-numbered ball 1st)."
-        ]
-      },
-      {
-        level: 16,
-        title: "15 Balls In Rotation",
-        rating: "World Class Pro (AAA)",
-        tier: "Pro",
-        balls: 15,
-        summary: "15 balls in strict numerical rotation (1-15), BIH after break.",
-        details: [
-          "Break a rack of 15 balls.",
-          "Take cue ball in hand after the break.",
-          "Shoot balls in strict rotation (1 to 15), lowest ball 1st."
-        ]
-      }
+    const LEVELS = [
+      { level: 1, title: "6 Balls Direct", rating: "Lower Novice", summary: "6 balls, pocket object balls directly with no cue ball." },
+      { level: 2, title: "6 Balls, BIH Every Shot", rating: "Mid Novice", summary: "6 balls, any order, cue ball in hand on every single shot." },
+      { level: 3, title: "6 Balls, 3 Extra BIHs", rating: "Upper Novice", summary: "6 balls, any order, BIH after break + 3 extra BIHs anytime." },
+      { level: 4, title: "6 Balls, 2 Extra BIHs", rating: "Lower Beginner (D-)", summary: "6 balls, any order, BIH after break + 2 extra BIHs anytime." },
+      { level: 5, title: "6 Balls, 1 Extra BIH", rating: "Mid Beginner (D)", summary: "6 balls, any order, BIH after break + 1 extra BIH anytime." },
+      { level: 6, title: "7 Balls (8-Ball), 1 Extra BIH", rating: "Upper Beginner (D+)", summary: "7 balls (3 solids, 3 stripes, 8), 8-ball rules, 1 extra BIH." },
+      { level: 7, title: "9 Balls, 1 Extra BIH", rating: "Lower Intermediate (C-)", summary: "9 balls, any order, BIH after break + 1 extra BIH anytime." },
+      { level: 8, title: "9 Balls (8-Ball), 1 Extra BIH", rating: "Mid Intermediate (C)", summary: "9 balls (4 solids, 4 stripes, 8), 8-ball rules, 1 extra BIH." },
+      { level: 9, title: "15 Balls, 2 Extra BIHs", rating: "Upper Intermediate (C+)", summary: "15 balls, any order, BIH after break + 2 extra BIHs anytime." },
+      { level: 10, title: "6 Balls In Rotation", rating: "Lower Advanced (B-)", summary: "6 balls in numerical rotation, BIH after break only." },
+      { level: 11, title: "15 Balls Any Order", rating: "Mid Advanced (B)", summary: "15 balls, any order, BIH after break only." },
+      { level: 12, title: "15 Balls 8-Ball Rules", rating: "Upper Advanced (B+)", summary: "15 balls, standard 8-ball rules, BIH after break only." },
+      { level: 13, title: "9 Balls 8-Ball + Rotation", rating: "Lower Shortstop (A-)", summary: "9 balls: suit + 8, then remaining balls in rotation." },
+      { level: 14, title: "9 Balls 9-Ball Rules", rating: "Upper Shortstop (A)", summary: "Standard 9-ball rules in rotation, BIH after break." },
+      { level: 15, title: "15 Balls 8-Ball + Rotation", rating: "Semipro / Pro (A+/AA)", summary: "15 balls: suit + 8, then remaining 7 balls in rotation." },
+      { level: 16, title: "15 Balls In Rotation", rating: "World Class Pro (AAA)", summary: "15 balls in strict numerical rotation (1 to 15), BIH after break." }
     ];
 
     // ==========================================
     // State Variables (Compatible with Legacy Keys)
     // ==========================================
     let currentLevel = 1;
-    let currentRound = []; // Array of 'win' | 'loss' for in-progress set
+    let currentRound = [];
     let history = []; 
-    let displayLimit = 200; // Attempt count limit for progression chart
-    let dateFilterMode = 'all'; // 'all' | 'today' | '7d' | '30d'
-    let autoFitLevelScale = true; // Auto-fit Y-axis scale to actual fluctuation range
-    let showAllEfficiencyLevels = false; // By default show only played levels to debug crowding
-    let efficiencyDisplayMode = 'count'; // 'count' | 'pct'
+    let displayLimit = 200;
+    let dateFilterMode = 'all';
+    let autoFitLevelScale = true;
+    let showAllEfficiencyLevels = false;
+    let efficiencyDisplayMode = 'count';
 
-    // Haptic feedback for iOS Safari (where supported)
     function triggerHaptic(type = 'light') {
       if (navigator.vibrate) {
-        if (type === 'light') navigator.vibrate(20);
-        else if (type === 'success') navigator.vibrate([25, 40, 35]);
-        else if (type === 'warning') navigator.vibrate([40, 50]);
+        if (type === 'light') navigator.vibrate(18);
+        else if (type === 'success') navigator.vibrate([20, 35, 30]);
+        else if (type === 'warning') navigator.vibrate([35, 45]);
       }
     }
 
-    // Load Saved Data from LocalStorage (Preserving Exact Historical Keys)
     function loadSavedData() {
       const savedHistory = localStorage.getItem('levelTracker_history');
       const savedLevel = localStorage.getItem('levelTracker_level');
@@ -1333,12 +947,12 @@
               const noticeEl = document.getElementById('data-notice');
               const textEl = document.getElementById('data-notice-text');
               if (noticeEl && textEl) {
-                noticeEl.style.display = 'inline-flex';
+                noticeEl.style.display = 'inline-block';
                 textEl.innerText = `${history.length} attempts loaded`;
               }
             }
           }
-        } catch(e) { console.error("Error parsing history", e); }
+        } catch(e) { console.error("Error loading history", e); }
       }
 
       if (savedLevel) {
@@ -1346,15 +960,17 @@
       }
 
       if (savedRound) {
-        try { 
-          const r = JSON.parse(savedRound); 
+        try {
+          const r = JSON.parse(savedRound);
           if (Array.isArray(r)) currentRound = r;
         } catch(e) {}
       }
 
       if (savedTheme === 'dark') {
         document.body.classList.add('dark-mode');
-        document.getElementById('theme-btn').innerText = '☀️';
+        document.getElementById('theme-btn').innerText = 'Light';
+      } else {
+        document.getElementById('theme-btn').innerText = 'Dark';
       }
     }
 
@@ -1367,13 +983,13 @@
     function toggleTheme() {
       document.body.classList.toggle('dark-mode');
       const isDark = document.body.classList.contains('dark-mode');
-      document.getElementById('theme-btn').innerText = isDark ? '☀️' : '🌙';
+      document.getElementById('theme-btn').innerText = isDark ? 'Light' : 'Dark';
       localStorage.setItem('levelTracker_theme', isDark ? 'dark' : 'light');
       updateChartColors();
     }
 
     function getChartTextColor() {
-      return document.body.classList.contains('dark-mode') ? '#f8fafc' : '#0f172a';
+      return document.body.classList.contains('dark-mode') ? '#f1f5f9' : '#0f172a';
     }
 
     function getChartSubtextColor() {
@@ -1381,37 +997,23 @@
     }
 
     function getChartGridColor() {
-      return document.body.classList.contains('dark-mode') ? '#23344d' : '#e2e8f0';
+      return document.body.classList.contains('dark-mode') ? '#1f2937' : '#e2e8f0';
     }
 
-    // Populate Level Selector Dropdown (Levels 1 to 16)
+    // Populate Selector Dropdown
     const selectEl = document.getElementById('start-level');
-    RDS_LEVELS.forEach(lvl => {
+    LEVELS.forEach(lvl => {
       let opt = document.createElement('option');
       opt.value = lvl.level;
-      opt.innerText = `Level ${lvl.level}: ${lvl.title} (${lvl.rating})`;
+      opt.innerText = `L${lvl.level}: ${lvl.title}`;
       selectEl.appendChild(opt);
     });
 
-    // Toggle drill detail bullet list
-    function toggleDrillDetails() {
-      const listEl = document.getElementById('drill-details-list');
-      const arrowEl = document.getElementById('drill-toggle-arrow');
-      if (listEl.style.display === 'block') {
-        listEl.style.display = 'none';
-        arrowEl.innerText = '▸';
-      } else {
-        listEl.style.display = 'block';
-        arrowEl.innerText = '▾';
-      }
-    }
-
-    // Helper: Determine attempt outcome ('win' | 'loss') backwards-compatible with legacy JSON
+    // Determine Attempt Outcome ('win' | 'loss') Backwards-Compatible
     function getAttemptResult(entry, index, historyArr, currentRoundArr) {
       if (entry.result) return entry.result;
       if (entry.attemptResult) return entry.attemptResult;
       
-      // If next entry has larger round array in same set
       if (index + 1 < historyArr.length) {
         const next = historyArr[index + 1];
         if (next.round && entry.round && next.round.length > entry.round.length) {
@@ -1419,28 +1021,25 @@
         }
       }
 
-      // If entry finished a round
       if (entry.roundResult) {
         if (entry.roundResult === '2/2') return 'win';
         if (entry.roundResult === '0/3') return 'loss';
-        if (entry.roundResult === '2/3') return 'win'; // Round terminates on 2nd win
+        if (entry.roundResult === '2/3') return 'win';
         if (entry.roundResult === '1/3') {
-          // If previous tries in round had 1 win, then this 3rd try was a loss.
           const priorWins = (entry.round || []).filter(r => r === 'win').length;
           return priorWins === 1 ? 'loss' : 'win';
         }
       }
 
-      // If it's the latest attempt and round in progress
       if (currentRoundArr && entry.round && currentRoundArr.length > entry.round.length) {
         return currentRoundArr[entry.round.length];
       }
 
-      return 'loss'; // Safe fallback
+      return 'loss';
     }
 
     // ==========================================
-    // Chart 1: Progression & Smoothed Trendline
+    // Chart 1: Progression Setup (With Safe Tap Selection)
     // ==========================================
     const ctxProgress = document.getElementById('progressChart').getContext('2d');
     const progressChart = new Chart(ctxProgress, {
@@ -1451,23 +1050,23 @@
           {
             label: 'Actual Level',
             data: [],
-            borderColor: 'rgba(56, 189, 248, 0.45)', // Subtle thinner line
-            backgroundColor: 'rgba(56, 189, 248, 0.45)',
+            borderColor: 'rgba(59, 130, 246, 0.4)',
+            backgroundColor: 'rgba(59, 130, 246, 0.4)',
             borderWidth: 1.5,
             pointRadius: 1.5,
             pointHoverRadius: 5,
-            tension: 0.25,
+            tension: 0.2,
             fill: false
           },
           {
-            label: 'Smoothed Skill Trend',
+            label: 'Smoothed Trend',
             data: [],
-            borderColor: '#10b981', // Prominent emerald trendline
+            borderColor: '#16a34a',
             backgroundColor: 'transparent',
-            borderWidth: 2.5,
+            borderWidth: 2.2,
             pointRadius: 0,
             pointHoverRadius: 4,
-            tension: 0.4,
+            tension: 0.35,
             fill: false
           }
         ]
@@ -1475,52 +1074,38 @@
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        interaction: {
-          mode: 'index',
-          intersect: false
+        onClick: (event, elements, chart) => {
+          if (!elements || elements.length === 0) {
+            clearProgressSelection();
+            return;
+          }
+          const idx = elements[0].index;
+          showProgressSelection(idx);
         },
         plugins: {
           legend: {
             display: true,
             position: 'top',
             labels: {
-              boxWidth: 12,
-              font: { size: 11, weight: 'bold' },
+              boxWidth: 10,
+              font: { size: 11, weight: '600' },
               color: getChartTextColor
             }
           },
           datalabels: { display: false },
-          tooltip: {
-            callbacks: {
-              title: (items) => {
-                let idx = items[0].dataIndex;
-                let entry = items[0].chart.data.fullHistory[idx];
-                let d = new Date(entry.timestamp).toLocaleDateString(undefined, { 
-                  month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' 
-                });
-                return `Rack #${entry.attemptNum} · ${d}`;
-              },
-              label: (item) => {
-                let entry = item.chart.data.fullHistory[item.dataIndex];
-                let resTxt = entry.inferredResult === 'win' ? 'Runout (+)' : 'Miss (-)';
-                if (item.datasetIndex === 0) {
-                  let info = RDS_LEVELS[entry.level - 1] || {};
-                  return `Level ${item.raw}: ${info.rating || ''} [${resTxt}]`;
-                } else {
-                  return `Smoothed Trend: Lvl ${item.raw}`;
-                }
-              }
-            }
-          },
+          // Tooltip disabled to prevent unremovable sticky overlays blocking canvas on touch screens
+          tooltip: { enabled: false },
           zoom: {
             pan: {
               enabled: true,
-              mode: 'x'
+              mode: 'x',
+              onPanStart: () => clearProgressSelection()
             },
             zoom: {
               pinch: { enabled: true },
               wheel: { enabled: true },
-              mode: 'x'
+              mode: 'x',
+              onZoomStart: () => clearProgressSelection()
             }
           }
         },
@@ -1531,11 +1116,8 @@
             ticks: {
               stepSize: 1,
               color: getChartTextColor,
-              font: { size: 10, weight: 'bold' },
-              callback: function(val) {
-                let info = RDS_LEVELS[val - 1];
-                return info ? `L${val} ${info.tier.slice(0,3)}` : `L${val}`;
-              }
+              font: { size: 10, weight: '600' },
+              callback: function(val) { return `L${val}`; }
             },
             grid: { color: getChartGridColor }
           },
@@ -1543,7 +1125,7 @@
             ticks: {
               maxRotation: 0,
               autoSkip: true,
-              maxTicksLimit: 7,
+              maxTicksLimit: 6,
               color: getChartSubtextColor,
               font: { size: 10 }
             },
@@ -1553,8 +1135,31 @@
       }
     });
 
+    function showProgressSelection(idx) {
+      const fullHistory = progressChart.data.fullHistory;
+      if (!fullHistory || !fullHistory[idx]) return;
+
+      const entry = fullHistory[idx];
+      const d = new Date(entry.timestamp).toLocaleDateString(undefined, {
+        month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+      });
+      const res = entry.inferredResult === 'win' ? 'Success (+)' : 'Failure (-)';
+      const lvlInfo = LEVELS[entry.level - 1] || {};
+      const trend = progressChart.data.datasets[1].data[idx] || entry.level;
+
+      const bar = document.getElementById('selected-point-bar');
+      const text = document.getElementById('selected-point-text');
+      text.innerText = `Rack #${entry.attemptNum} · Level ${entry.level} (${lvlInfo.rating}) · ${res} · ${d} · Trend: ${trend}`;
+      bar.classList.add('show');
+    }
+
+    function clearProgressSelection() {
+      const bar = document.getElementById('selected-point-bar');
+      if (bar) bar.classList.remove('show');
+    }
+
     // ==========================================
-    // Chart 2: Efficiency Breakdown (Debugged)
+    // Chart 2: Level Efficiency Setup
     // ==========================================
     const ctxBreakdown = document.getElementById('breakdownChart').getContext('2d');
     const breakdownChart = new Chart(ctxBreakdown, {
@@ -1562,10 +1167,10 @@
       data: {
         labels: [],
         datasets: [
-          { label: '2/2 (Clean Advance)', data: [], backgroundColor: '#10b981', barPercentage: 0.65, categoryPercentage: 0.8 },
-          { label: '2/3 (Grinded Advance)', data: [], backgroundColor: '#0284c7', barPercentage: 0.65, categoryPercentage: 0.8 },
-          { label: '1/3 (Stay / Hold)', data: [], backgroundColor: '#f59e0b', barPercentage: 0.65, categoryPercentage: 0.8 },
-          { label: '0/3 (Drop / Demote)', data: [], backgroundColor: '#ef4444', barPercentage: 0.65, categoryPercentage: 0.8 }
+          { label: '2/2 (Clean)', data: [], backgroundColor: '#16a34a', barPercentage: 0.65, categoryPercentage: 0.8 },
+          { label: '2/3 (Grind)', data: [], backgroundColor: '#2563eb', barPercentage: 0.65, categoryPercentage: 0.8 },
+          { label: '1/3 (Hold)', data: [], backgroundColor: '#d97706', barPercentage: 0.65, categoryPercentage: 0.8 },
+          { label: '0/3 (Drop)', data: [], backgroundColor: '#dc2626', barPercentage: 0.65, categoryPercentage: 0.8 }
         ]
       },
       options: {
@@ -1577,20 +1182,19 @@
             position: 'top',
             labels: {
               color: getChartTextColor,
-              boxWidth: 12,
-              font: { size: 11, weight: 'bold' }
+              boxWidth: 10,
+              font: { size: 10.5, weight: '600' }
             }
           },
           datalabels: {
             color: '#ffffff',
-            font: { weight: 'bold', size: 10 },
+            font: { weight: '700', size: 9.5 },
             formatter: (value, ctx) => {
               if (value === 0) return '';
               let datasets = ctx.chart.data.datasets;
               let total = datasets.reduce((sum, ds) => sum + (ds.data[ctx.dataIndex] || 0), 0);
               if (total === 0) return '';
               let pct = Math.round((value / total) * 100);
-              // Only render inside label if segment is comfortably wide (>=14%) and value >= 2
               return (pct >= 14 && value >= 2) ? `${pct}%` : '';
             }
           },
@@ -1613,7 +1217,7 @@
         scales: {
           x: {
             stacked: true,
-            title: { display: true, text: 'Total Sets Played', color: getChartSubtextColor, font: { size: 11, weight: 'bold' } },
+            title: { display: true, text: 'Sets', color: getChartSubtextColor, font: { size: 10.5, weight: '600' } },
             ticks: { color: getChartTextColor, stepSize: 1 },
             grid: { color: getChartGridColor }
           },
@@ -1621,7 +1225,7 @@
             stacked: true,
             ticks: {
               color: getChartTextColor,
-              font: { weight: 'bold', size: 11 }
+              font: { weight: '600', size: 10.5 }
             },
             grid: { color: getChartGridColor }
           }
@@ -1634,7 +1238,6 @@
       const subtextColor = getChartSubtextColor();
       const gridColor = getChartGridColor();
 
-      // Progress Chart colors
       progressChart.options.scales.x.ticks.color = subtextColor;
       progressChart.options.scales.x.grid.color = gridColor;
       progressChart.options.scales.y.ticks.color = textColor;
@@ -1644,7 +1247,6 @@
       }
       progressChart.update();
 
-      // Breakdown Chart colors
       breakdownChart.options.scales.x.ticks.color = textColor;
       breakdownChart.options.scales.x.grid.color = gridColor;
       breakdownChart.options.scales.x.title.color = subtextColor;
@@ -1657,11 +1259,11 @@
     }
 
     // ==========================================
-    // Progression Chart Filter Controls (Req 6 & 8)
+    // Filter & Zoom Controls
     // ==========================================
     function setAttemptPreset(limit) {
       displayLimit = limit;
-      document.querySelectorAll('#filter-presets .pill-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('#filter-presets .btn-toggle').forEach(b => b.classList.remove('active'));
       event.target.classList.add('active');
 
       const slider = document.getElementById('attempt-slider');
@@ -1671,38 +1273,43 @@
         label.innerText = `All (${history.length})`;
       } else {
         slider.value = Math.min(limit, history.length || 200);
-        label.innerText = `Last ${limit}`;
+        label.innerText = `${limit}`;
       }
+      clearProgressSelection();
       updateUI();
     }
 
     function onSliderChange(val) {
       displayLimit = parseInt(val);
-      document.getElementById('slider-label').innerText = `Last ${val}`;
-      document.querySelectorAll('#filter-presets .pill-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById('slider-label').innerText = `${val}`;
+      document.querySelectorAll('#filter-presets .btn-toggle').forEach(b => b.classList.remove('active'));
+      clearProgressSelection();
       updateUI();
     }
 
     function setDateFilter(mode) {
       dateFilterMode = mode;
-      document.querySelectorAll('#date-presets .pill-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('#date-presets .btn-toggle').forEach(b => b.classList.remove('active'));
       event.target.classList.add('active');
+      clearProgressSelection();
       updateUI();
     }
 
     function toggleAutoFitScale() {
       autoFitLevelScale = !autoFitLevelScale;
       document.getElementById('btn-scale-toggle').innerText = autoFitLevelScale 
-        ? "Scale: Auto-Fit (Tight)" 
+        ? "Scale: Auto-Fit" 
         : "Scale: Full (1-16)";
       updateUI();
     }
 
     function zoomProgressChart(factor) {
+      clearProgressSelection();
       if (progressChart.zoom) progressChart.zoom(factor);
     }
 
     function resetProgressZoom() {
+      clearProgressSelection();
       if (progressChart.resetZoom) progressChart.resetZoom();
     }
 
@@ -1729,7 +1336,7 @@
     }
 
     // ==========================================
-    // Gameplay & Logging Logic
+    // Gameplay & Logging
     // ==========================================
     function setInitialLevel(val) {
       const targetLvl = parseInt(val);
@@ -1737,7 +1344,7 @@
         currentLevel = targetLvl;
         saveData();
         updateUI();
-      } else if (confirm(`Changing starting level to Level ${targetLvl} will reset current drill history. Continue?`)) {
+      } else if (confirm(`Changing start level to Level ${targetLvl} resets current session history. Continue?`)) {
         currentLevel = targetLvl;
         history = [];
         currentRound = [];
@@ -1757,18 +1364,15 @@
 
       const wins = nextRound.filter(r => r === 'win').length;
       if (wins === 2) {
-        // Run 2 of 3 racks -> Advance! (Early termination on 2/2 clean win or 2/3)
         roundResult = nextRound.length === 2 ? '2/2' : '2/3';
         nextLevel = Math.min(16, currentLevel + 1);
       } else if (nextRound.length === 3) {
-        // 3 tries completed without 2 wins: 1 win = Stay, 0 wins = Drop
         roundResult = wins === 1 ? '1/3' : '0/3';
         if (wins === 0) {
           nextLevel = Math.max(1, currentLevel - 1);
         }
       }
 
-      // Record in history with explicit result and full backward compatibility
       history.push({
         level: currentLevel,
         result: result,
@@ -1800,7 +1404,7 @@
     }
 
     function resetApp() {
-      if (confirm("Reset all recorded pool drill data? This cannot be undone.")) {
+      if (confirm("Reset all recorded drill data? This cannot be undone.")) {
         currentLevel = parseInt(selectEl.value) || 1;
         currentRound = [];
         history = [];
@@ -1812,101 +1416,73 @@
     }
 
     // ==========================================
-    // UI Rendering & Statistical Engine
+    // UI Rendering & Analytics
     // ==========================================
     function updateUI() {
-      // 1. Current Drill Card
-      const lvlInfo = RDS_LEVELS[currentLevel - 1] || RDS_LEVELS[0];
+      // 1. Active Level Card
+      const lvlInfo = LEVELS[currentLevel - 1] || LEVELS[0];
       document.getElementById('level-display').innerText = `Level ${currentLevel}`;
       selectEl.value = currentLevel;
-
-      // Tier Badge Styling
-      const tierBadge = document.getElementById('level-tier-badge');
-      tierBadge.innerText = `${lvlInfo.rating}`;
-      tierBadge.className = 'tier-badge';
-      const tierClassMap = {
-        'Novice': 'tier-novice',
-        'Beginner': 'tier-beginner',
-        'Intermediate': 'tier-intermediate',
-        'Advanced': 'tier-advanced',
-        'Shortstop': 'tier-shortstop',
-        'Pro': 'tier-pro'
-      };
-      tierBadge.classList.add(tierClassMap[lvlInfo.tier] || 'tier-novice');
-
-      // Drill Description & Rules
+      document.getElementById('level-tier-badge').innerText = lvlInfo.rating;
       document.getElementById('drill-summary-text').innerText = lvlInfo.summary;
-      const detailsList = document.getElementById('drill-details-list');
-      detailsList.innerHTML = lvlInfo.details.map(d => `<li>${d}</li>`).join('');
 
-      // 3-Rack Circles
+      // Dots
       for (let i = 0; i < 3; i++) {
         const dot = document.getElementById(`rack-dot-${i}`);
         if (i < currentRound.length) {
-          dot.className = `rack-circle ${currentRound[i]}`;
-          dot.innerText = currentRound[i] === 'win' ? '✓' : '✕';
+          dot.className = `dot ${currentRound[i]}`;
         } else {
-          dot.className = 'rack-circle pending';
-          dot.innerText = `${i + 1}`;
+          dot.className = 'dot';
         }
       }
 
-      // Status text for current round
-      const statusTextEl = document.getElementById('rack-status-text');
+      // Status
+      const statusEl = document.getElementById('rack-status-text');
       const winsSoFar = currentRound.filter(r => r === 'win').length;
-      const triesSoFar = currentRound.length;
+      const count = currentRound.length;
 
-      if (triesSoFar === 0) {
-        statusTextEl.innerText = `Rack 1 of 3: Need 2 rack runouts to advance to Level ${Math.min(16, currentLevel + 1)}.`;
-      } else if (triesSoFar === 1) {
-        statusTextEl.innerText = winsSoFar === 1 
-          ? `Rack 2 of 3: 1 win! Win Rack 2 for an instant clean advance.`
-          : `Rack 2 of 3: Missed Rack 1. Win next 2 to advance, or win 1 to stay.`;
-      } else if (triesSoFar === 2) {
-        statusTextEl.innerText = winsSoFar === 1
-          ? `Rack 3 of 3: Decider! Win this rack to ADVANCE (2/3), or miss to STAY (1/3).`
-          : `Rack 3 of 3: Must win this rack to STAY at Level ${currentLevel}, or drop to Level ${Math.max(1, currentLevel - 1)}.`;
+      if (count === 0) {
+        statusEl.innerText = `Rack 1 of 3: Need 2 wins to advance`;
+      } else if (count === 1) {
+        statusEl.innerText = winsSoFar === 1 
+          ? `Rack 2 of 3: 1 win! Win Rack 2 to advance immediately`
+          : `Rack 2 of 3: Missed Rack 1. Need next 2 wins to advance`;
+      } else if (count === 2) {
+        statusEl.innerText = winsSoFar === 1
+          ? `Rack 3 of 3: Decider! Win to Advance (2/3), or miss to Stay (1/3)`
+          : `Rack 3 of 3: Win to Stay at Lvl ${currentLevel}, or miss to Drop`;
       }
 
-      // Slider upper bound update
+      // Slider upper bound
       const slider = document.getElementById('attempt-slider');
       slider.max = Math.max(20, history.length);
 
-      // 2. Data Enrichment & Date Filtering
+      // 2. Data Enrichment & Date Filter
       let enrichedHistory = history.map((h, i) => ({
         ...h,
         attemptNum: i + 1,
         inferredResult: getAttemptResult(h, i, history, currentRound)
       }));
 
-      // Apply Date Filter
       let now = new Date();
       let filteredHistory = enrichedHistory.filter(entry => {
         if (dateFilterMode === 'all') return true;
         let entryDate = new Date(entry.timestamp);
         let diffMs = now - entryDate;
-        if (dateFilterMode === 'today') {
-          return entryDate.toDateString() === now.toDateString();
-        } else if (dateFilterMode === '7d') {
-          return diffMs <= 7 * 24 * 60 * 60 * 1000;
-        } else if (dateFilterMode === '30d') {
-          return diffMs <= 30 * 24 * 60 * 60 * 1000;
-        }
+        if (dateFilterMode === 'today') return entryDate.toDateString() === now.toDateString();
+        if (dateFilterMode === '7d') return diffMs <= 7 * 24 * 60 * 60 * 1000;
+        if (dateFilterMode === '30d') return diffMs <= 30 * 24 * 60 * 60 * 1000;
         return true;
       });
 
-      // Apply Attempt Limit Filter
-      let visibleHistory = displayLimit > 0 
-        ? filteredHistory.slice(-displayLimit) 
-        : filteredHistory;
+      let visibleHistory = displayLimit > 0 ? filteredHistory.slice(-displayLimit) : filteredHistory;
 
-      // 3. Update Progression Chart
+      // 3. Progression Chart
       let labels = [];
       let levelData = [];
       let trendData = [];
       let seenDates = new Set();
 
-      // Compute Moving Average Trendline (Smoothed Competency Curve)
       let windowSize = Math.max(5, Math.min(20, Math.floor(visibleHistory.length / 5)));
       for (let i = 0; i < visibleHistory.length; i++) {
         let entry = visibleHistory[i];
@@ -1919,7 +1495,6 @@
         labels.push(xLabel);
         levelData.push(entry.level);
 
-        // Calculate moving average
         let start = Math.max(0, i - windowSize + 1);
         let slice = visibleHistory.slice(start, i + 1);
         let sum = slice.reduce((acc, curr) => acc + curr.level, 0);
@@ -1927,7 +1502,6 @@
         trendData.push(avg);
       }
 
-      // Auto-fit Y scale logic (Requirement 8)
       if (autoFitLevelScale && levelData.length > 0) {
         let minLvl = Math.min(...levelData);
         let maxLvl = Math.max(...levelData);
@@ -1944,7 +1518,7 @@
       progressChart.data.fullHistory = visibleHistory;
       progressChart.update();
 
-      // 4. Overall Metrics & Level Breakdown
+      // 4. Metrics & Breakdown
       let levelCounts = Array.from({length: 16}, () => ({
         totalRacks: 0,
         rackWins: 0,
@@ -1992,7 +1566,7 @@
         }
       });
 
-      // Update Summary Cards (Requirement 4)
+      // Update Summary Cards
       document.getElementById('stat-attempts').innerText = totalIndividualAttempts;
       let rackSuccessPct = totalIndividualAttempts > 0 
         ? ((totalIndividualWins / totalIndividualAttempts) * 100).toFixed(1) 
@@ -2001,7 +1575,7 @@
       document.getElementById('stat-sets').innerText = completedSets;
       document.getElementById('stat-peak').innerText = `Lvl ${peakLvl}`;
 
-      // Update Set Outcomes Table
+      // Update Outcome Table
       document.getElementById('table-advance-count').innerText = `${advanceSets}`;
       document.getElementById('table-advance-rate').innerText = completedSets > 0 
         ? `${((advanceSets / completedSets) * 100).toFixed(1)}%` 
@@ -2017,22 +1591,17 @@
         ? `${((dropSets / completedSets) * 100).toFixed(1)}%` 
         : '0.0%';
 
-      // 5. Update Efficiency Chart (Requirement 6 Debugged)
+      // 5. Efficiency Chart
       let activeIndices = [];
       for (let i = 0; i < 16; i++) {
         if (showAllEfficiencyLevels || levelCounts[i].setsTotal > 0 || levelCounts[i].totalRacks > 0) {
           activeIndices.push(i);
         }
       }
+      if (activeIndices.length === 0) activeIndices = [currentLevel - 1];
 
-      if (activeIndices.length === 0) {
-        activeIndices = [currentLevel - 1];
-      }
-
-      // Dynamic Canvas Height to prevent crowded bars
       const effWrapper = document.getElementById('eff-wrapper');
-      const targetHeight = Math.max(260, activeIndices.length * 38);
-      effWrapper.style.height = `${targetHeight}px`;
+      effWrapper.style.height = `${Math.max(240, activeIndices.length * 36)}px`;
 
       let effLabels = [];
       let data2_2 = [];
@@ -2042,11 +1611,8 @@
 
       activeIndices.forEach(idx => {
         let cnt = levelCounts[idx];
-        let info = RDS_LEVELS[idx];
         let total = cnt.setsTotal;
-
-        // Label includes total sets so low sample sizes are crystal clear
-        effLabels.push(`Lvl ${idx + 1} (${total} sets)`);
+        effLabels.push(`Lvl ${idx + 1} (${total})`);
 
         if (efficiencyDisplayMode === 'pct' && total > 0) {
           data2_2.push(Math.round((cnt.twoOfTwo / total) * 100));
@@ -2061,9 +1627,7 @@
         }
       });
 
-      breakdownChart.options.scales.x.title.text = efficiencyDisplayMode === 'pct' 
-        ? 'Percentage of Sets (%)' 
-        : 'Total Sets Played';
+      breakdownChart.options.scales.x.title.text = efficiencyDisplayMode === 'pct' ? 'Percentage (%)' : 'Sets';
       breakdownChart.options.scales.x.max = efficiencyDisplayMode === 'pct' ? 100 : undefined;
 
       breakdownChart.data.labels = effLabels;
@@ -2073,69 +1637,58 @@
       breakdownChart.data.datasets[3].data = data0_3;
       breakdownChart.update();
 
-      // 6. Statistical Competency & Variance Engine (Requirement 10)
+      // 6. Analytics Calculations & Elaborations
       calculateCompetencyAnalytics(enrichedHistory, levelCounts);
 
-      // 7. Render Detailed Matrix Table
+      // 7. Matrix Table
       renderMatrixTable(levelCounts);
     }
 
     // ==========================================
-    // Statistical Competency & Pool Variance Engine
+    // Analytics & Variance Engine (Detailed Numbers)
     // ==========================================
     function calculateCompetencyAnalytics(allHistory, levelCounts) {
       if (allHistory.length === 0) {
-        document.getElementById('ana-rating').innerText = 'Level 1.0 (Novice)';
+        document.getElementById('ana-rating').innerText = 'Lvl 1.0';
         document.getElementById('ana-threshold').innerText = '0.0%';
-        document.getElementById('ana-variance').innerText = 'Baseline';
-        document.getElementById('ana-momentum').innerText = 'No Data';
+        document.getElementById('ana-variance').innerText = '0.00';
+        document.getElementById('ana-momentum').innerText = '0.00';
         return;
       }
 
-      // A. Difficulty-Adjusted Competency Score (DACS)
-      // Pool difficulty is non-linear: higher levels demand vastly higher cue ball precision.
-      // We take a 30-attempt recent window and compute:
-      // True Skill = MeanLevel + 2.5 * (WinRate - 0.50)
-      let recentWindow = allHistory.slice(-35);
-      let avgLevel = recentWindow.reduce((s, h) => s + h.level, 0) / recentWindow.length;
-      let recentWins = recentWindow.filter(h => h.inferredResult === 'win').length;
-      let recentWinRate = recentWins / recentWindow.length;
-
-      let dacs = avgLevel + 2.5 * (recentWinRate - 0.50);
-      dacs = Math.max(1.0, Math.min(16.0, dacs));
-      
-      let roundedLvl = Math.round(dacs);
-      let ratingObj = RDS_LEVELS[Math.min(15, Math.max(0, roundedLvl - 1))];
-      document.getElementById('ana-rating').innerText = `Lvl ${dacs.toFixed(1)} · ${ratingObj.rating}`;
-      document.getElementById('ana-rating-desc').innerText = 
-        `Recent 35 racks: Avg Lvl ${avgLevel.toFixed(1)} with ${(recentWinRate * 100).toFixed(1)}% runout rate.`;
-
-      // B. Mathematical Promotion Threshold (The 61.8% RDS Golden Rule)
-      // To advance, P(win >= 2 of 3) = 3p^2 - 2p^3 >= 0.50  ==>  p >= 61.8%
+      // 1. Promotion Benchmark at current level
       let currLvlIdx = currentLevel - 1;
       let currStats = levelCounts[currLvlIdx];
       let currRackSuccess = currStats.totalRacks > 0 
         ? (currStats.rackWins / currStats.totalRacks) * 100 
         : 0;
-      
       let thresholdDiff = currRackSuccess - 61.8;
       let diffSign = thresholdDiff >= 0 ? '+' : '';
+      
       document.getElementById('ana-threshold').innerText = `${currRackSuccess.toFixed(1)}% (${diffSign}${thresholdDiff.toFixed(1)}%)`;
-      document.getElementById('ana-threshold-desc').innerText = currRackSuccess >= 61.8
-        ? `Above 61.8% promotion break-even! Mathematically favored to advance.`
-        : `Below 61.8% break-even. Needs tighter consistency to advance past Lvl ${currentLevel}.`;
+      if (currStats.totalRacks === 0) {
+        document.getElementById('ana-threshold-desc').innerText = `No attempts logged at Level ${currentLevel} yet.`;
+      } else if (currRackSuccess >= 61.8) {
+        document.getElementById('ana-threshold-desc').innerText = `Above the 61.8% break-even mark. Statistically favored to promote.`;
+      } else if (currRackSuccess >= 35.0) {
+        document.getElementById('ana-threshold-desc').innerText = `Within hold range (35%–61%). Expected to maintain level.`;
+      } else {
+        document.getElementById('ana-threshold-desc').innerText = `Below 35%. Likely to trigger 0/3 demotion without tighter runouts.`;
+      }
 
-      // C. Luck & Variance (Standard Deviation of Level)
-      // Pool has dry breaks & skids. High SD indicates volatility/variance; low SD indicates stable competency.
+      // 2. Variance & Volatility (Standard Deviation over recent 35 racks)
+      let recentWindow = allHistory.slice(-35);
+      let avgLevel = recentWindow.reduce((s, h) => s + h.level, 0) / recentWindow.length;
       let varianceSum = recentWindow.reduce((s, h) => s + Math.pow(h.level - avgLevel, 2), 0);
       let stdDev = Math.sqrt(varianceSum / recentWindow.length);
-      let varText = stdDev < 0.7 ? "High Stability" : (stdDev <= 1.4 ? "Moderate Variance" : "High Volatility");
-      document.getElementById('ana-variance').innerText = `${varText} (±${stdDev.toFixed(2)})`;
-      document.getElementById('ana-variance-desc').innerText = stdDev <= 1.0 
-        ? "Consistent performance. Fluctuations reflect true skill stability."
-        : "Normal pool table variance: rack clusters and break luck causing swings.";
 
-      // D. Momentum & Trend (Last 25% vs Prior 75%)
+      let varLabel = stdDev < 0.7 ? "Stable" : (stdDev <= 1.4 ? "Moderate" : "High Volatility");
+      document.getElementById('ana-variance').innerText = `\u00b1${stdDev.toFixed(2)} (${varLabel})`;
+      document.getElementById('ana-variance-desc').innerText = stdDev <= 1.0
+        ? `Low fluctuation (\u00b1${stdDev.toFixed(2)} levels). Demonstrates consistent cue ball control.`
+        : `Normal table spread (\u00b1${stdDev.toFixed(2)} levels). Variance driven by clusters & break luck.`;
+
+      // 3. Momentum & Trend (Last 25% vs Prior 75%)
       if (allHistory.length >= 12) {
         let splitIdx = Math.floor(allHistory.length * 0.75);
         let prior = allHistory.slice(0, splitIdx);
@@ -2145,15 +1698,27 @@
         let recentAvg = recent.reduce((s, h) => s + h.level, 0) / recent.length;
         let delta = recentAvg - priorAvg;
 
-        let arrow = delta > 0.3 ? '▲ Improving' : (delta < -0.3 ? '▼ Cooling Off' : '▶ Steady');
         let sign = delta >= 0 ? '+' : '';
-        document.getElementById('ana-momentum').innerText = `${arrow} (${sign}${delta.toFixed(2)})`;
-        document.getElementById('ana-momentum-desc').innerText = 
-          `Recent level avg (${recentAvg.toFixed(1)}) vs baseline (${priorAvg.toFixed(1)}).`;
+        let momLabel = delta > 0.35 ? "Improving" : (delta < -0.35 ? "Cooling Off" : "Steady");
+        document.getElementById('ana-momentum').innerText = `${sign}${delta.toFixed(2)} (${momLabel})`;
+        document.getElementById('ana-momentum-desc').innerText = delta >= 0
+          ? `Recent average (${recentAvg.toFixed(1)}) is ${sign}${delta.toFixed(2)} levels above baseline (${priorAvg.toFixed(1)}).`
+          : `Recent average (${recentAvg.toFixed(1)}) dropped ${delta.toFixed(2)} below baseline (${priorAvg.toFixed(1)}).`;
       } else {
-        document.getElementById('ana-momentum').innerText = 'Calibrating...';
-        document.getElementById('ana-momentum-desc').innerText = 'Play at least 12 racks for momentum trending.';
+        document.getElementById('ana-momentum').innerText = 'Calibrating';
+        document.getElementById('ana-momentum-desc').innerText = 'Play at least 12 racks to establish baseline.';
       }
+
+      // 4. Difficulty-Adjusted Competency Score
+      let recentWins = recentWindow.filter(h => h.inferredResult === 'win').length;
+      let recentWinRate = recentWins / recentWindow.length;
+      let dacs = avgLevel + 2.5 * (recentWinRate - 0.50);
+      dacs = Math.max(1.0, Math.min(16.0, dacs));
+      let ratingObj = LEVELS[Math.min(15, Math.max(0, Math.round(dacs) - 1))];
+
+      document.getElementById('ana-rating').innerText = `Lvl ${dacs.toFixed(1)} \u00b7 ${ratingObj.rating}`;
+      document.getElementById('ana-rating-desc').innerText = 
+        `Recent 35 racks: Avg Lvl ${avgLevel.toFixed(1)} with ${(recentWinRate * 100).toFixed(1)}% runouts.`;
     }
 
     // ==========================================
@@ -2167,26 +1732,26 @@
         let cnt = levelCounts[i];
         if (cnt.totalRacks === 0 && cnt.setsTotal === 0 && !showAllEfficiencyLevels) continue;
 
-        let info = RDS_LEVELS[i];
+        let info = LEVELS[i];
         let rackPct = cnt.totalRacks > 0 ? ((cnt.rackWins / cnt.totalRacks) * 100).toFixed(1) : '0.0';
         let isCurrent = (i + 1 === currentLevel);
 
         rowsHtml += `
-          <tr style="${isCurrent ? 'background: rgba(56, 189, 248, 0.1); font-weight: bold;' : ''}">
-            <td>Lvl ${i + 1}: ${info.rating} ${isCurrent ? '📍' : ''}</td>
+          <tr style="${isCurrent ? 'background: var(--card-sub); font-weight: 600;' : ''}">
+            <td>L${i + 1} (${info.rating}) ${isCurrent ? '(Active)' : ''}</td>
             <td>${cnt.totalRacks}</td>
-            <td style="color: ${rackPct >= 61.8 ? 'var(--success-color)' : 'inherit'}">${rackPct}%</td>
+            <td style="color: ${rackPct >= 61.8 ? 'var(--success)' : 'inherit'}">${rackPct}%</td>
             <td>${cnt.setsTotal}</td>
-            <td style="color: var(--success-color)">${cnt.twoOfTwo}</td>
-            <td style="color: var(--accent-color)">${cnt.twoOfThree}</td>
-            <td style="color: var(--warning-color)">${cnt.oneOfThree}</td>
-            <td style="color: var(--failure-color)">${cnt.zeroOfThree}</td>
+            <td style="color: var(--success)">${cnt.twoOfTwo}</td>
+            <td style="color: var(--accent)">${cnt.twoOfThree}</td>
+            <td style="color: var(--warning)">${cnt.oneOfThree}</td>
+            <td style="color: var(--failure)">${cnt.zeroOfThree}</td>
           </tr>
         `;
       }
 
       if (rowsHtml === '') {
-        rowsHtml = `<tr><td colspan="8" style="text-align:center; color:var(--subtext-color);">No drill history recorded yet. Tap + or - above to begin!</td></tr>`;
+        rowsHtml = `<tr><td colspan="8" style="text-align:center; color:var(--muted); padding: 12px;">No drill history recorded yet.</td></tr>`;
       }
 
       tbody.innerHTML = rowsHtml;
@@ -2197,46 +1762,19 @@
       const btn = document.getElementById('matrix-toggle-btn');
       if (el.style.display === 'none') {
         el.style.display = 'block';
-        btn.innerText = 'Hide Table';
+        btn.innerText = 'Hide';
       } else {
         el.style.display = 'none';
-        btn.innerText = 'Show Table';
+        btn.innerText = 'Show';
       }
     }
 
     // ==========================================
-    // Reference Guide Modal
-    // ==========================================
-    function openDrillGuideModal() {
-      const modal = document.getElementById('drill-guide-modal');
-      const listEl = document.getElementById('modal-level-list');
-      
-      listEl.innerHTML = RDS_LEVELS.map(lvl => `
-        <div class="level-guide-item ${lvl.level === currentLevel ? 'active' : ''}">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-            <strong>Level ${lvl.level}: ${lvl.title}</strong>
-            <span class="rate-badge badge-advance">${lvl.rating}</span>
-          </div>
-          <div style="font-size:12px; margin-bottom:6px; color:var(--text-color);">${lvl.summary}</div>
-          <ul style="margin:0; padding-left:18px; font-size:11.5px; color:var(--subtext-color);">
-            ${lvl.details.map(d => `<li>${d}</li>`).join('')}
-          </ul>
-        </div>
-      `).join('');
-
-      modal.classList.add('open');
-    }
-
-    function closeDrillGuideModal() {
-      document.getElementById('drill-guide-modal').classList.remove('open');
-    }
-
-    // ==========================================
-    // Data Export, Import & GitHub Sync (Req 7 & 9)
+    // Data Backup & Export Controls
     // ==========================================
     function exportCSV() {
-      if (history.length === 0) return alert("No drill history to export.");
-      let csv = "Attempt,Timestamp,Level,AttemptResult,RoundSoFar,RoundResult\n";
+      if (history.length === 0) return alert("No history to export.");
+      let csv = "Attempt,Timestamp,Level,Result,RoundSoFar,RoundResult\n";
       history.forEach((h, i) => {
         let res = getAttemptResult(h, i, history, currentRound);
         let roundStr = (h.round || []).join(';');
@@ -2246,16 +1784,15 @@
       let blob = new Blob([csv], { type: 'text/csv' });
       let a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = `dr_dave_rds_${new Date().toISOString().slice(0,10)}.csv`;
+      a.download = `drill_history_${new Date().toISOString().slice(0,10)}.csv`;
       a.click();
     }
 
     function exportJSON() {
-      if (history.length === 0) return alert("No drill history to export.");
-      // Schema is 100% identical to legacy format { level, round, history }
+      if (history.length === 0) return alert("No history to export.");
       let dataObj = {
-        app: "DrDave_RDS_Tracker",
-        version: "2.0",
+        app: "Runout_Drill_Tracker",
+        version: "2.1",
         level: currentLevel,
         round: currentRound,
         history: history
@@ -2263,7 +1800,7 @@
       let blob = new Blob([JSON.stringify(dataObj, null, 2)], { type: 'application/json' });
       let a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = `dr_dave_rds_backup_${new Date().toISOString().slice(0,10)}.json`;
+      a.download = `drill_backup_${new Date().toISOString().slice(0,10)}.json`;
       a.click();
     }
 
@@ -2280,24 +1817,23 @@
             currentRound = Array.isArray(imported.round) ? imported.round : [];
             saveData();
             updateUI();
-            alert(`Success! Imported ${history.length} attempts. Current Level: ${currentLevel}.`);
+            alert(`Imported ${history.length} attempts successfully. Current Level: ${currentLevel}.`);
           } else if (Array.isArray(imported)) {
-            // Case where raw array was exported
             history = imported;
             currentLevel = 1;
             currentRound = [];
             saveData();
             updateUI();
-            alert(`Success! Imported ${history.length} attempts.`);
+            alert(`Imported ${history.length} attempts successfully.`);
           } else {
-            alert("Unrecognized JSON format. File must contain RDS drill history.");
+            alert("Unrecognized JSON format. File must contain valid drill history.");
           }
         } catch (err) {
-          alert("Error parsing JSON file. Please check file formatting.");
+          alert("Error parsing JSON file.");
         }
       };
       reader.readAsText(file);
-      event.target.value = ''; // Reset input
+      event.target.value = '';
     }
 
     function checkSyncStatus() {
@@ -2307,12 +1843,10 @@
         localStorage.getItem('levelTracker_round') || ''
       ]).size;
 
-      alert(`Storage Health Status:\n✔ All data saved locally in Safari/Web storage.\n✔ Total Attempts: ${history.length}\n✔ Current Level: ${currentLevel} of 16\n✔ Storage Footprint: ${(storageBytes / 1024).toFixed(1)} KB\n\nNote: Pushing new code to GitHub Pages maintains your local data uninterrupted!`);
+      alert(`Storage Health Status:\n- Local storage status: Active and saved.\n- Total Recorded Attempts: ${history.length}\n- Current Level: ${currentLevel} of 16\n- Approximate Storage Footprint: ${(storageBytes / 1024).toFixed(1)} KB\n\nYour data remains safe and persistent across GitHub updates.`);
     }
 
-    // ==========================================
-    // Application Initialization
-    // ==========================================
+    // Initialize
     loadSavedData();
     updateUI();
   </script>
