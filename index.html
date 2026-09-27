@@ -201,53 +201,62 @@
       max-width: 140px;
     }
 
-    /* Slim 3-Try Status Bar */
+    /* 3-Try Status Bar (Compact, larger circles, no stake text) */
     .round-bar {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 10px;
       background: var(--card-sub);
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
-      padding: 7px 10px;
+      padding: 6px 12px;
       margin-bottom: 10px;
-      font-size: 12px;
+    }
+
+    .round-counter-text {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.1px;
     }
 
     .round-dots {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 10px;
     }
 
     .dot {
-      width: 12px;
-      height: 12px;
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
-      border: 1.5px solid var(--border);
-      background: transparent;
-      display: inline-block;
+      border: 2px solid var(--border);
+      background: var(--card-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--muted);
       transition: all 0.15s ease;
+    }
+
+    .dot.current {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-soft);
     }
 
     .dot.win {
       background: var(--success);
       border-color: var(--success);
+      color: #ffffff;
     }
 
     .dot.loss {
       background: var(--failure);
       border-color: var(--failure);
-    }
-
-    .round-status-text {
-      flex: 1;
-      text-align: left;
-      font-weight: 500;
-      color: var(--text);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      color: #ffffff;
     }
 
     /* Fast, Thumb-Friendly Action Buttons */
@@ -498,21 +507,110 @@
       color: #ffffff;
     }
 
-    .slider-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    /* Dual Range Slider for Custom Range */
+    .range-control-box {
       background: var(--card-sub);
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
-      padding: 4px 8px;
+      padding: 8px 10px;
       margin-bottom: 8px;
-      font-size: 11.5px;
     }
 
-    .slider-row input[type="range"] {
-      flex: 1;
-      accent-color: var(--accent);
+    .range-meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11.5px;
+      margin-bottom: 6px;
+    }
+
+    .range-inputs {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .range-num-input {
+      width: 44px;
+      padding: 2px 4px;
+      font-size: 11px;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--card-bg);
+      color: var(--text);
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .dual-slider-wrap {
+      position: relative;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      margin: 2px 0;
+      touch-action: pan-y;
+    }
+
+    .slider-track-bg {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      z-index: 1;
+    }
+
+    .slider-track-active {
+      position: absolute;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 3px;
+      z-index: 2;
+    }
+
+    .dual-slider-wrap input[type="range"] {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      pointer-events: none;
+      -webkit-appearance: none;
+      appearance: none;
+      z-index: 3;
+    }
+
+    .dual-slider-wrap input[type="range"]::-webkit-slider-thumb {
+      pointer-events: auto;
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--card-bg);
+      border: 2.5px solid var(--accent);
+      cursor: pointer;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    }
+
+    .dual-slider-wrap input[type="range"]::-webkit-slider-thumb:active {
+      transform: scale(1.15);
+    }
+
+    .dual-slider-wrap input[type="range"]::-moz-range-thumb {
+      pointer-events: auto;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--card-bg);
+      border: 2.5px solid var(--accent);
+      cursor: pointer;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.25);
     }
 
     .chart-controls-bar {
@@ -642,14 +740,14 @@
         </div>
       </div>
 
-      <!-- Slim 3-Try Status Bar -->
+      <!-- 3-Try Status Bar (Compact, larger circles, no stake description) -->
       <div class="round-bar">
+        <span class="round-counter-text" id="rack-counter-text">Rack 1 of 3</span>
         <div class="round-dots">
-          <span class="dot" id="rack-dot-0"></span>
-          <span class="dot" id="rack-dot-1"></span>
-          <span class="dot" id="rack-dot-2"></span>
+          <div class="dot current" id="rack-dot-0">1</div>
+          <div class="dot" id="rack-dot-1">2</div>
+          <div class="dot" id="rack-dot-2">3</div>
         </div>
-        <div class="round-status-text" id="rack-status-text">Rack 1 of 3: Need 2 wins to advance</div>
       </div>
 
       <!-- Large Thumb-Friendly Action Buttons -->
@@ -772,12 +870,11 @@
 
       <!-- Presets & Date Filters -->
       <div class="filter-row">
-        <div class="btn-group" id="filter-presets">
-          <button class="btn-toggle" onclick="setAttemptPreset(30)">30</button>
-          <button class="btn-toggle" onclick="setAttemptPreset(50)">50</button>
-          <button class="btn-toggle" onclick="setAttemptPreset(100)">100</button>
-          <button class="btn-toggle active" onclick="setAttemptPreset(200)">200</button>
-          <button class="btn-toggle" onclick="setAttemptPreset(0)">All</button>
+        <div class="btn-group" id="range-presets">
+          <button class="btn-toggle" onclick="setRangePreset('first50')">First 50</button>
+          <button class="btn-toggle" onclick="setRangePreset('last50')">Last 50</button>
+          <button class="btn-toggle" onclick="setRangePreset('last100')">Last 100</button>
+          <button class="btn-toggle active" onclick="setRangePreset('all')">All</button>
         </div>
 
         <div class="btn-group" id="date-presets">
@@ -788,11 +885,23 @@
         </div>
       </div>
 
-      <!-- Dynamic Attempt Slider -->
-      <div class="slider-row">
-        <label for="attempt-slider" style="color: var(--muted); font-weight: 600;">Window:</label>
-        <input type="range" id="attempt-slider" min="10" max="200" value="200" oninput="onSliderChange(this.value)">
-        <span id="slider-label" style="font-weight: 700; min-width: 60px; text-align: right;">200</span>
+      <!-- Custom Range Bar (Allows first X-Y attempts or any slice) -->
+      <div class="range-control-box">
+        <div class="range-meta-row">
+          <span>Range: <strong id="range-summary-text">1 – 50</strong> <span id="range-count-text" style="color:var(--muted); font-size:11px;">(50 racks)</span></span>
+          <div class="range-inputs">
+            <span style="color:var(--muted); font-size:11px;">Racks:</span>
+            <input type="number" id="input-range-start" class="range-num-input" min="1" value="1" onchange="onRangeInputChange()">
+            <span style="color:var(--muted);">&ndash;</span>
+            <input type="number" id="input-range-end" class="range-num-input" min="1" value="50" onchange="onRangeInputChange()">
+          </div>
+        </div>
+        <div class="dual-slider-wrap" id="dual-slider-container">
+          <div class="slider-track-bg"></div>
+          <div class="slider-track-active" id="slider-track-fill"></div>
+          <input type="range" id="slider-range-start" min="1" max="100" value="1" oninput="onRangeStartSlide(this.value)">
+          <input type="range" id="slider-range-end" min="1" max="100" value="100" oninput="onRangeEndSlide(this.value)">
+        </div>
       </div>
 
       <!-- Zoom Controls & Scale Toggle -->
@@ -878,7 +987,8 @@
         <button class="btn-data" onclick="exportJSON()">Export JSON</button>
         <button class="btn-data" onclick="exportCSV()">Export CSV</button>
         <button class="btn-data" onclick="document.getElementById('file-input').click()">Import JSON</button>
-        <button class="btn-data" onclick="checkSyncStatus()">Storage Health</button>
+        <button class="btn-data" onclick="compactStorage()">Compact Storage</button>
+        <button class="btn-data" onclick="checkSyncStatus()" style="grid-column: span 2;">Storage Health & Quota</button>
       </div>
       <input type="file" id="file-input" style="display:none;" onchange="importJSON(event)" accept=".json">
     </div>
@@ -918,7 +1028,9 @@
     let currentLevel = 1;
     let currentRound = [];
     let history = []; 
-    let displayLimit = 200;
+    let rangeStart = 1;
+    let rangeEnd = 0; // 0 defaults to all filtered attempts
+    let maxAttempts = 1;
     let dateFilterMode = 'all';
     let autoFitLevelScale = true;
     let showAllEfficiencyLevels = false;
@@ -1259,32 +1371,179 @@
     }
 
     // ==========================================
-    // Filter & Zoom Controls
+    // Filter & Custom Range Controls
     // ==========================================
-    function setAttemptPreset(limit) {
-      displayLimit = limit;
-      document.querySelectorAll('#filter-presets .btn-toggle').forEach(b => b.classList.remove('active'));
+    function setRangePreset(preset) {
+      document.querySelectorAll('#range-presets .btn-toggle').forEach(b => b.classList.remove('active'));
       event.target.classList.add('active');
 
-      const slider = document.getElementById('attempt-slider');
-      const label = document.getElementById('slider-label');
-      if (limit === 0) {
-        slider.value = history.length || 200;
-        label.innerText = `All (${history.length})`;
-      } else {
-        slider.value = Math.min(limit, history.length || 200);
-        label.innerText = `${limit}`;
+      if (preset === 'first50') {
+        rangeStart = 1;
+        rangeEnd = Math.min(50, maxAttempts);
+      } else if (preset === 'last50') {
+        rangeStart = Math.max(1, maxAttempts - 49);
+        rangeEnd = maxAttempts;
+      } else if (preset === 'last100') {
+        rangeStart = Math.max(1, maxAttempts - 99);
+        rangeEnd = maxAttempts;
+      } else if (preset === 'all') {
+        rangeStart = 1;
+        rangeEnd = maxAttempts;
       }
+
+      const sStart = document.getElementById('slider-range-start');
+      const sEnd = document.getElementById('slider-range-end');
+      if (sStart && sEnd) {
+        sStart.value = rangeStart;
+        sEnd.value = rangeEnd;
+      }
+      const iStart = document.getElementById('input-range-start');
+      const iEnd = document.getElementById('input-range-end');
+      if (iStart && iEnd) {
+        iStart.value = rangeStart;
+        iEnd.value = rangeEnd;
+      }
+
       clearProgressSelection();
+      updateRangeTrackFill();
       updateUI();
     }
 
-    function onSliderChange(val) {
-      displayLimit = parseInt(val);
-      document.getElementById('slider-label').innerText = `${val}`;
-      document.querySelectorAll('#filter-presets .btn-toggle').forEach(b => b.classList.remove('active'));
+    function onRangeStartSlide(val) {
+      val = parseInt(val);
+      if (val >= rangeEnd) {
+        val = Math.max(1, rangeEnd - 1);
+        document.getElementById('slider-range-start').value = val;
+      }
+      rangeStart = val;
+      const iStart = document.getElementById('input-range-start');
+      if (iStart) iStart.value = rangeStart;
+
+      // Adjust thumb stacking z-index
+      const sStart = document.getElementById('slider-range-start');
+      const sEnd = document.getElementById('slider-range-end');
+      if (sStart && sEnd) {
+        if (val > maxAttempts * 0.7) {
+          sStart.style.zIndex = '4';
+          sEnd.style.zIndex = '3';
+        } else {
+          sStart.style.zIndex = '3';
+          sEnd.style.zIndex = '4';
+        }
+      }
+
+      document.querySelectorAll('#range-presets .btn-toggle').forEach(b => b.classList.remove('active'));
       clearProgressSelection();
+      updateRangeTrackFill();
       updateUI();
+    }
+
+    function onRangeEndSlide(val) {
+      val = parseInt(val);
+      if (val <= rangeStart) {
+        val = Math.min(maxAttempts, rangeStart + 1);
+        document.getElementById('slider-range-end').value = val;
+      }
+      rangeEnd = val;
+      const iEnd = document.getElementById('input-range-end');
+      if (iEnd) iEnd.value = rangeEnd;
+
+      const sStart = document.getElementById('slider-range-start');
+      const sEnd = document.getElementById('slider-range-end');
+      if (sStart && sEnd) {
+        if (val < maxAttempts * 0.3) {
+          sEnd.style.zIndex = '4';
+          sStart.style.zIndex = '3';
+        } else {
+          sEnd.style.zIndex = '3';
+          sStart.style.zIndex = '4';
+        }
+      }
+
+      document.querySelectorAll('#range-presets .btn-toggle').forEach(b => b.classList.remove('active'));
+      clearProgressSelection();
+      updateRangeTrackFill();
+      updateUI();
+    }
+
+    function onRangeInputChange() {
+      const iStart = document.getElementById('input-range-start');
+      const iEnd = document.getElementById('input-range-end');
+      let startVal = parseInt(iStart.value) || 1;
+      let endVal = parseInt(iEnd.value) || maxAttempts;
+
+      startVal = Math.max(1, Math.min(startVal, maxAttempts));
+      endVal = Math.max(1, Math.min(endVal, maxAttempts));
+
+      if (startVal >= endVal) {
+        startVal = Math.max(1, endVal - 1);
+      }
+
+      rangeStart = startVal;
+      rangeEnd = endVal;
+
+      const sStart = document.getElementById('slider-range-start');
+      const sEnd = document.getElementById('slider-range-end');
+      if (sStart && sEnd) {
+        sStart.value = rangeStart;
+        sEnd.value = rangeEnd;
+      }
+      if (iStart) iStart.value = rangeStart;
+      if (iEnd) iEnd.value = rangeEnd;
+
+      document.querySelectorAll('#range-presets .btn-toggle').forEach(b => b.classList.remove('active'));
+      clearProgressSelection();
+      updateRangeTrackFill();
+      updateUI();
+    }
+
+    function updateRangeSliders(total) {
+      maxAttempts = Math.max(1, total);
+      const sStart = document.getElementById('slider-range-start');
+      const sEnd = document.getElementById('slider-range-end');
+      const iStart = document.getElementById('input-range-start');
+      const iEnd = document.getElementById('input-range-end');
+
+      if (rangeEnd === 0 || rangeEnd > maxAttempts) {
+        rangeEnd = maxAttempts;
+      }
+      if (rangeStart < 1) rangeStart = 1;
+      if (rangeStart > rangeEnd) rangeStart = Math.max(1, rangeEnd - 1);
+
+      if (sStart && sEnd) {
+        sStart.max = maxAttempts;
+        sEnd.max = maxAttempts;
+        sStart.value = rangeStart;
+        sEnd.value = rangeEnd;
+      }
+
+      if (iStart && iEnd) {
+        iStart.max = maxAttempts;
+        iEnd.max = maxAttempts;
+        iStart.value = rangeStart;
+        iEnd.value = rangeEnd;
+      }
+
+      updateRangeTrackFill();
+    }
+
+    function updateRangeTrackFill() {
+      const fill = document.getElementById('slider-track-fill');
+      if (!fill || maxAttempts <= 1) {
+        if (fill) { fill.style.left = '0%'; fill.style.width = '100%'; }
+        return;
+      }
+      const min = 1;
+      const max = maxAttempts;
+      const startPct = ((rangeStart - min) / (max - min)) * 100;
+      const endPct = ((rangeEnd - min) / (max - min)) * 100;
+      fill.style.left = `${startPct}%`;
+      fill.style.width = `${Math.max(0, endPct - startPct)}%`;
+
+      const summary = document.getElementById('range-summary-text');
+      if (summary) summary.innerText = `${rangeStart} – ${rangeEnd}`;
+      const countEl = document.getElementById('range-count-text');
+      if (countEl) countEl.innerText = `(${rangeEnd - rangeStart + 1} racks)`;
     }
 
     function setDateFilter(mode) {
@@ -1398,7 +1657,15 @@
       triggerHaptic('light');
       let lastState = history.pop();
       currentLevel = lastState.level;
-      currentRound = lastState.round || [];
+      if (lastState.round) {
+        currentRound = lastState.round;
+      } else {
+        currentRound = [];
+        for (let i = history.length - 1; i >= 0; i--) {
+          if (history[i].roundResult) break;
+          currentRound.unshift(history[i].result || 'loss');
+        }
+      }
       saveData();
       updateUI();
     }
@@ -1426,36 +1693,27 @@
       document.getElementById('level-tier-badge').innerText = lvlInfo.rating;
       document.getElementById('drill-summary-text').innerText = lvlInfo.summary;
 
-      // Dots
+      // 3 Large Status Circles (No stake description)
+      const count = currentRound.length;
+      const counterEl = document.getElementById('rack-counter-text');
+      if (counterEl) {
+        counterEl.innerText = `Rack ${Math.min(3, count + 1)} of 3`;
+      }
+
       for (let i = 0; i < 3; i++) {
         const dot = document.getElementById(`rack-dot-${i}`);
-        if (i < currentRound.length) {
+        if (!dot) continue;
+        if (i < count) {
           dot.className = `dot ${currentRound[i]}`;
+          dot.innerText = currentRound[i] === 'win' ? '✓' : '✕';
+        } else if (i === count) {
+          dot.className = 'dot current';
+          dot.innerText = `${i + 1}`;
         } else {
           dot.className = 'dot';
+          dot.innerText = `${i + 1}`;
         }
       }
-
-      // Status
-      const statusEl = document.getElementById('rack-status-text');
-      const winsSoFar = currentRound.filter(r => r === 'win').length;
-      const count = currentRound.length;
-
-      if (count === 0) {
-        statusEl.innerText = `Rack 1 of 3: Need 2 wins to advance`;
-      } else if (count === 1) {
-        statusEl.innerText = winsSoFar === 1 
-          ? `Rack 2 of 3: 1 win! Win Rack 2 to advance immediately`
-          : `Rack 2 of 3: Missed Rack 1. Need next 2 wins to advance`;
-      } else if (count === 2) {
-        statusEl.innerText = winsSoFar === 1
-          ? `Rack 3 of 3: Decider! Win to Advance (2/3), or miss to Stay (1/3)`
-          : `Rack 3 of 3: Win to Stay at Lvl ${currentLevel}, or miss to Drop`;
-      }
-
-      // Slider upper bound
-      const slider = document.getElementById('attempt-slider');
-      slider.max = Math.max(20, history.length);
 
       // 2. Data Enrichment & Date Filter
       let enrichedHistory = history.map((h, i) => ({
@@ -1475,7 +1733,13 @@
         return true;
       });
 
-      let visibleHistory = displayLimit > 0 ? filteredHistory.slice(-displayLimit) : filteredHistory;
+      // Update Range Sliders and sync bounds
+      updateRangeSliders(filteredHistory.length);
+
+      // Slice custom X-Y range (e.g. First 1-50, or custom dragged slice)
+      let visibleHistory = filteredHistory.length > 0 
+        ? filteredHistory.slice(rangeStart - 1, rangeEnd) 
+        : [];
 
       // 3. Progression Chart
       let labels = [];
@@ -1836,6 +2100,41 @@
       event.target.value = '';
     }
 
+    function compactStorage() {
+      if (history.length === 0) return alert("No drill history to compact.");
+      const beforeBytes = new Blob([
+        localStorage.getItem('levelTracker_history') || '',
+        localStorage.getItem('levelTracker_level') || '',
+        localStorage.getItem('levelTracker_round') || ''
+      ]).size;
+
+      // Compact history: retain essential fields (level, result, roundResult, timestamp), drop redundant round array
+      history = history.map((h, i) => ({
+        level: h.level,
+        result: h.result || h.attemptResult || getAttemptResult(h, i, history, currentRound),
+        roundResult: h.roundResult || null,
+        timestamp: h.timestamp || new Date().toISOString()
+      }));
+
+      saveData();
+
+      const afterBytes = new Blob([
+        localStorage.getItem('levelTracker_history') || '',
+        localStorage.getItem('levelTracker_level') || '',
+        localStorage.getItem('levelTracker_round') || ''
+      ]).size;
+
+      const savedBytes = Math.max(0, beforeBytes - afterBytes);
+      const savedPct = beforeBytes > 0 ? ((savedBytes / beforeBytes) * 100).toFixed(1) : 0;
+
+      alert(`Storage Compacted Successfully!\n\n` +
+            `- Before: ${(beforeBytes / 1024).toFixed(1)} KB\n` +
+            `- After: ${(afterBytes / 1024).toFixed(1)} KB\n` +
+            `- Space Saved: ${(savedBytes / 1024).toFixed(1)} KB (${savedPct}% reduction)\n\n` +
+            `All attempts, levels, and progress are fully intact.`);
+      updateUI();
+    }
+
     function checkSyncStatus() {
       let storageBytes = new Blob([
         localStorage.getItem('levelTracker_history') || '',
@@ -1843,7 +2142,16 @@
         localStorage.getItem('levelTracker_round') || ''
       ]).size;
 
-      alert(`Storage Health Status:\n- Local storage status: Active and saved.\n- Total Recorded Attempts: ${history.length}\n- Current Level: ${currentLevel} of 16\n- Approximate Storage Footprint: ${(storageBytes / 1024).toFixed(1)} KB\n\nYour data remains safe and persistent across GitHub updates.`);
+      const quotaBytes = 5 * 1024 * 1024; // 5 MB standard localStorage quota
+      const pctUsed = ((storageBytes / quotaBytes) * 100).toFixed(2);
+      const estCapacity = Math.max(0, Math.floor((quotaBytes - storageBytes) / 75));
+
+      alert(`Storage Health & Quota:\n\n` +
+            `- Local Storage Used: ${(storageBytes / 1024).toFixed(1)} KB of ~5,120 KB (${pctUsed}% of quota)\n` +
+            `- Total Recorded Attempts: ${history.length}\n` +
+            `- Current Level: ${currentLevel} of 16\n` +
+            `- Estimated Room Left: ~${estCapacity.toLocaleString()} more attempts\n\n` +
+            `Your data is securely stored in your browser's persistent storage and will remain intact across GitHub updates.`);
     }
 
     // Initialize
