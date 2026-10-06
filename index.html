@@ -237,107 +237,179 @@
     }
 
     /* English Pool Rotation Assistant (For Levels 10, 13, 14, 15, 16) */
-    .rotation-assistant-box {
+    /* 2D Canvas Pool Table Tool (Replaces Rotation Assistant) */
+    .canvas-table-box {
       display: none;
       background: var(--card-sub);
-      border: 1px dashed var(--accent);
+      border: 1px solid var(--border);
       border-radius: var(--radius-sm);
-      padding: 8px 10px;
-      margin-bottom: 10px;
+      padding: 10px;
+      margin-bottom: 12px;
       text-align: left;
     }
 
-    .rotation-assistant-box.active {
+    .canvas-table-box.active {
       display: block;
     }
 
-    .rot-header {
+    .table-tool-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 6px;
-      font-size: 11.5px;
+    }
+
+    .table-tool-title {
+      font-size: 12px;
       font-weight: 700;
-      color: var(--accent);
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-    }
-
-    .rot-balls-strip {
+      color: var(--text);
       display: flex;
-      gap: 6px;
-      align-items: center;
-      overflow-x: auto;
-      padding: 4px 0;
-      margin-bottom: 6px;
+      flex-direction: column;
     }
 
-    .rot-ball-pill {
+    .table-tool-subtitle {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+
+    .table-count-control {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
-      padding: 3px 8px;
-      border-radius: 12px;
-      font-size: 11px;
-      font-weight: 700;
-      border: 1.5px solid var(--border);
-      background: var(--card-bg);
-      color: var(--muted);
-      white-space: nowrap;
-      transition: all 0.15s ease;
+      gap: 5px;
     }
 
-    .rot-ball-pill.red { border-color: #ef4444; color: #ef4444; }
-    .rot-ball-pill.yellow { border-color: #f59e0b; color: #d97706; }
-    .rot-ball-pill.black { border-color: #475569; color: #475569; }
+    .btn-count-adj {
+      width: 24px;
+      height: 24px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      font-weight: 700;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      line-height: 1;
+    }
 
-    .rot-ball-pill.current {
+    .btn-count-adj:active { background: var(--border); }
+
+    .ball-count-badge {
+      min-width: 20px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .table-note-banner {
+      font-size: 11px;
+      color: var(--muted);
+      background: rgba(0,0,0,0.03);
+      padding: 5px 8px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      line-height: 1.35;
+    }
+
+    body.dark-mode .table-note-banner {
+      background: rgba(255,255,255,0.05);
+    }
+
+    .canvas-viewport-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 2 / 1;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+      background: #0f172a;
+      touch-action: none;
+    }
+
+    #poolTableCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      touch-action: none;
+      cursor: grab;
+    }
+
+    #poolTableCanvas:active {
+      cursor: grabbing;
+    }
+
+    .table-action-bar {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .btn-table-action {
+      flex: 1;
+      padding: 7px 6px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .btn-table-action.primary {
       background: var(--accent);
       border-color: var(--accent);
-      color: #ffffff !important;
-      transform: scale(1.08);
-      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+      color: #ffffff;
+      font-weight: 700;
     }
 
-    .rot-ball-pill.done {
-      background: var(--success-soft);
-      border-color: var(--success);
-      color: var(--success);
-      opacity: 0.7;
-      text-decoration: line-through;
+    .btn-table-action:active {
+      filter: brightness(0.92);
     }
 
-    .rot-actions {
+    .target-tracker-strip {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px dashed var(--border);
       display: flex;
+      flex-direction: column;
       gap: 6px;
     }
 
-    .btn-rot-step {
-      flex: 1;
-      padding: 6px 8px;
+    .target-indicator-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .target-pill {
+      font-size: 11.5px;
+      font-weight: 800;
+      padding: 2px 10px;
+      border-radius: 12px;
       background: var(--accent);
+      color: #ffffff;
+    }
+
+    .btn-pot-next {
+      width: 100%;
+      padding: 8px 10px;
+      background: var(--success);
       color: #ffffff;
       border: none;
       border-radius: var(--radius-sm);
-      font-size: 11.5px;
+      font-size: 12px;
       font-weight: 700;
       cursor: pointer;
     }
 
-    .btn-rot-step:active {
-      filter: brightness(0.9);
-    }
-
-    .btn-rot-reset {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      padding: 6px 10px;
-      font-size: 11.5px;
-      font-weight: 600;
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-    }
+    .btn-pot-next:active { background: var(--success-active); }
 
     /* 3-Try Status Bar (Compact, larger circles, no stake text) */
     .round-bar {
@@ -898,16 +970,55 @@
           </div>
         </div>
 
-        <!-- English Pool Rotation Assistant (Appears on Levels 10, 13, 14, 15, 16) -->
-        <div class="rotation-assistant-box" id="rotation-box">
-          <div class="rot-header">
-            <span>English Pool Rotation (Reds &amp; Yellows)</span>
-            <span id="rot-step-text" style="color:var(--text); font-weight:700;">Ball 1 of 6</span>
+        <!-- 2D Canvas Pool Table & Ball Randomizer (For Levels 10, 13, 14, 15, 16) -->
+        <div class="canvas-table-box" id="canvas-table-box">
+          <div class="table-tool-header">
+            <div class="table-tool-title">
+              <span>Table Ball Randomizer</span>
+              <span class="table-tool-subtitle" id="table-level-hint">Map &amp; Randomize Target Order</span>
+            </div>
+            <div class="table-count-control">
+              <span style="font-size:11px; color:var(--muted); font-weight:600;">Balls:</span>
+              <button class="btn-count-adj" onclick="adjustCanvasBallCount(-1)">−</button>
+              <span id="canvas-ball-count-val" class="ball-count-badge">6</span>
+              <button class="btn-count-adj" onclick="adjustCanvasBallCount(1)">+</button>
+            </div>
           </div>
-          <div class="rot-balls-strip" id="rot-strip"></div>
-          <div class="rot-actions">
-            <button class="btn-rot-step" onclick="potTargetBall()">Potted Target Ball (Next)</button>
-            <button class="btn-rot-reset" onclick="resetRotPattern()">Reset Order</button>
+
+          <div class="table-note-banner" id="table-note-banner">
+            Tap or drag balls to match physical table positions, then tap <strong>Randomize Order</strong>.
+          </div>
+
+          <!-- The 2D Pool Table Canvas -->
+          <div class="canvas-viewport-wrap">
+            <canvas id="poolTableCanvas"></canvas>
+          </div>
+
+          <!-- Table Controls -->
+          <div class="table-action-bar">
+            <button class="btn-table-action primary" id="btn-randomize-order" onclick="randomizeCanvasBalls()">
+              🎲 Randomize Order
+            </button>
+            <button class="btn-table-action" id="btn-quick-scatter" onclick="quickScatterCanvasBalls()">
+              Auto-Place
+            </button>
+            <button class="btn-table-action" onclick="resetCanvasTable()">
+              Clear
+            </button>
+          </div>
+
+          <!-- Target Ball Tracker (Active after randomization) -->
+          <div class="target-tracker-strip" id="target-tracker-strip" style="display:none;">
+            <div class="target-indicator-row">
+              <span style="color:var(--muted); font-size:11px; font-weight:600;">Current Target:</span>
+              <span id="target-ball-label" class="target-pill">Ball #1</span>
+              <span id="target-step-counter" style="color:var(--muted); font-size:11px; font-weight:600;">1 of 6</span>
+            </div>
+            <div class="target-pot-actions">
+              <button class="btn-pot-next" id="btn-pot-next" onclick="potCanvasTargetBall()">
+                ✓ Potted Target Ball (Next)
+              </button>
+            </div>
           </div>
         </div>
 
@@ -1277,8 +1388,7 @@
     // Discipline: English Pool (Reds & Yellows)
     const activeDiscipline = 'english';
 
-    // Rotation Tool State (for English Pool on Levels 10, 13, 14, 15, 16)
-    let rotCurrentIndex = 0;
+
 
     // RDS 100 State
     let rds100 = {
@@ -1650,10 +1760,7 @@
               title: (contexts) => {
                 if (!contexts || contexts.length === 0) return '';
                 const dataIdx = contexts[0].dataIndex;
-                const rawTotals = contexts[0].chart.data.rawTotals;
-                const total = (rawTotals && rawTotals[dataIdx]) !== undefined ? rawTotals[dataIdx] : 0;
-                const label = contexts[0].chart.data.labels[dataIdx] || '';
-                return `${label} · ${total} ${total === 1 ? 'set' : 'sets'} played`;
+                return contexts[0].chart.data.labels[dataIdx] || '';
               },
               label: (context) => {
                 const dsIdx = context.datasetIndex;
@@ -1946,111 +2053,490 @@
     }
 
     // ==========================================
-    // English Pool Rotational Tool (Point 4B)
+    // 2D Canvas Pool Table & Ball Randomizer
+    // (Replaces static rotation assistant with true spatial randomness)
     // ==========================================
-    function getRotationSequenceForLevel(lvl) {
+    let canvasTableState = {
+      level: null,
+      targetCount: 6,
+      balls: [],
+      isRandomized: false,
+      currentTargetIndex: 1,
+      draggingIndex: -1,
+      isInitializedEvents: false
+    };
+
+    function getCanvasTableConfig(lvl) {
       if (lvl === 10) {
-        // 6 balls rotation: Red -> Yellow -> Red -> Yellow -> Red -> Yellow
-        return [
-          { color: 'red', label: '🔴 R1' },
-          { color: 'yellow', label: '🟡 Y1' },
-          { color: 'red', label: '🔴 R2' },
-          { color: 'yellow', label: '🟡 Y2' },
-          { color: 'red', label: '🔴 R3' },
-          { color: 'yellow', label: '🟡 Y3' }
-        ];
+        return {
+          active: true,
+          defaultCount: 6,
+          maxCount: 6,
+          minCount: 2,
+          hasBlack: false,
+          title: "Level 10: 6 Balls Rotation",
+          hint: "Drag balls to match table positions, then tap 'Randomize Order' to assign shooting order."
+        };
       } else if (lvl === 13) {
-        // 9 balls: Suit + 8, then remaining 4 balls in alternating rotation
-        return [
-          { color: 'black', label: 'Suit + 8' },
-          { color: 'red', label: '🔴 Rem 1' },
-          { color: 'yellow', label: '🟡 Rem 2' },
-          { color: 'red', label: '🔴 Rem 3' },
-          { color: 'yellow', label: '🟡 Rem 4' }
-        ];
+        return {
+          active: true,
+          defaultCount: 4,
+          maxCount: 4,
+          minCount: 2,
+          hasBlack: false,
+          title: "Level 13: 8-Ball + Rotation",
+          hint: "Shoot suit + 8-ball first under standard rules. Then map the remaining 4 balls here to randomize their rotation order."
+        };
       } else if (lvl === 14) {
-        // 9 balls rotation: 4 Reds, 4 Yellows, 8 Ball is money ball
-        return [
-          { color: 'red', label: '🔴 R1' },
-          { color: 'yellow', label: '🟡 Y1' },
-          { color: 'red', label: '🔴 R2' },
-          { color: 'yellow', label: '🟡 Y2' },
-          { color: 'red', label: '🔴 R3' },
-          { color: 'yellow', label: '🟡 Y3' },
-          { color: 'red', label: '🔴 R4' },
-          { color: 'yellow', label: '🟡 Y4' },
-          { color: 'black', label: '⚫ 8' }
-        ];
+        return {
+          active: true,
+          defaultCount: 9,
+          maxCount: 9,
+          minCount: 2,
+          hasBlack: true,
+          title: "Level 14: 9-Ball Rules in Rotation",
+          hint: "Map balls onto the table. The 8-ball is money ball (last); remaining balls are randomized 1–8."
+        };
       } else if (lvl === 15) {
-        // 15 balls: Suit + 8, then remaining 7 balls in rotation
-        return [
-          { color: 'black', label: 'Suit + 8' },
-          { color: 'red', label: '🔴 Rem 1' },
-          { color: 'yellow', label: '🟡 Rem 2' },
-          { color: 'red', label: '🔴 Rem 3' },
-          { color: 'yellow', label: '🟡 Rem 4' },
-          { color: 'red', label: '🔴 Rem 5' },
-          { color: 'yellow', label: '🟡 Rem 6' },
-          { color: 'red', label: '🔴 Rem 7' }
-        ];
+        return {
+          active: true,
+          defaultCount: 7,
+          maxCount: 7,
+          minCount: 2,
+          hasBlack: false,
+          title: "Level 15: 8-Ball + 7 Rotation",
+          hint: "Shoot suit + 8-ball first. Then map the remaining 7 balls here to randomize their rotation order."
+        };
       } else if (lvl === 16) {
-        // 15 balls rotation: 7 reds, 7 yellows, 8 ball
-        let seq = [];
-        for (let i = 1; i <= 7; i++) {
-          seq.push({ color: 'red', label: `🔴 R${i}` });
-          seq.push({ color: 'yellow', label: `🟡 Y${i}` });
-        }
-        seq.push({ color: 'black', label: '⚫ 8' });
-        return seq;
+        return {
+          active: true,
+          defaultCount: 15,
+          maxCount: 15,
+          minCount: 2,
+          hasBlack: true,
+          title: "Level 16: 15 Balls Full Rotation",
+          hint: "Map balls or tap Auto-Place, then Randomize. 8-ball is final ball (#15)."
+        };
       }
       return null;
     }
 
-    function updateRotationToolUI() {
-      const box = document.getElementById('rotation-box');
-      const seq = getRotationSequenceForLevel(currentLevel);
-
-      if (!seq) {
+    function updateCanvasTableUI() {
+      const box = document.getElementById('canvas-table-box');
+      if (!box) return;
+      const cfg = getCanvasTableConfig(currentLevel);
+      if (!cfg) {
         box.classList.remove('active');
         return;
       }
-
       box.classList.add('active');
-      const strip = document.getElementById('rot-strip');
-      const stepText = document.getElementById('rot-step-text');
 
-      if (rotCurrentIndex >= seq.length) {
-        stepText.innerText = "All Balls Cleared!";
-      } else {
-        stepText.innerText = `Target: ${seq[rotCurrentIndex].label} (${rotCurrentIndex + 1} of ${seq.length})`;
+      document.getElementById('table-level-hint').innerText = cfg.title;
+      document.getElementById('table-note-banner').innerText = cfg.hint;
+
+      if (canvasTableState.level !== currentLevel) {
+        canvasTableState.level = currentLevel;
+        canvasTableState.targetCount = cfg.defaultCount;
+        canvasTableState.isRandomized = false;
+        canvasTableState.currentTargetIndex = 1;
+        quickScatterCanvasBalls(false);
       }
 
-      strip.innerHTML = seq.map((b, i) => {
-        let cls = `rot-ball-pill ${b.color}`;
-        if (i < rotCurrentIndex) cls += ' done';
-        else if (i === rotCurrentIndex) cls += ' current';
-        return `<span class="${cls}">${b.label}</span>`;
-      }).join('');
+      document.getElementById('canvas-ball-count-val').innerText = canvasTableState.targetCount;
+      updateCanvasTrackerStrip();
+      initCanvasTableListeners();
+      drawPoolTable();
     }
 
-    function potTargetBall() {
-      const seq = getRotationSequenceForLevel(currentLevel);
-      if (!seq) return;
-      rotCurrentIndex++;
+    function adjustCanvasBallCount(delta) {
+      const cfg = getCanvasTableConfig(currentLevel);
+      if (!cfg) return;
+      let newCount = canvasTableState.targetCount + delta;
+      newCount = Math.max(cfg.minCount, Math.min(cfg.maxCount, newCount));
+      if (newCount === canvasTableState.targetCount) return;
+
+      canvasTableState.targetCount = newCount;
+      document.getElementById('canvas-ball-count-val').innerText = newCount;
+      quickScatterCanvasBalls(false);
       triggerHaptic('light');
-
-      if (rotCurrentIndex >= seq.length) {
-        // Rack completed via sequence!
-        triggerHaptic('success');
-        logTry('win');
-        rotCurrentIndex = 0;
-      }
-      updateRotationToolUI();
     }
 
-    function resetRotPattern() {
-      rotCurrentIndex = 0;
-      updateRotationToolUI();
+    function quickScatterCanvasBalls(animate = true) {
+      const cfg = getCanvasTableConfig(currentLevel);
+      if (!cfg) return;
+
+      canvasTableState.isRandomized = false;
+      canvasTableState.currentTargetIndex = 1;
+      canvasTableState.balls = [];
+
+      const count = canvasTableState.targetCount;
+      const minX = 38, maxX = 362, minY = 38, maxY = 162;
+      const minDistance = Math.min(30, 260 / Math.sqrt(count));
+
+      for (let i = 0; i < count; i++) {
+        let color = 'red';
+        if (cfg.hasBlack && i === count - 1) {
+          color = 'black';
+        } else {
+          color = (i % 2 === 0) ? 'red' : 'yellow';
+        }
+
+        let x = 0, y = 0, attempts = 0, valid = false;
+        while (!valid && attempts < 100) {
+          attempts++;
+          x = minX + Math.random() * (maxX - minX);
+          y = minY + Math.random() * (maxY - minY);
+          valid = true;
+          for (let b of canvasTableState.balls) {
+            let dist = Math.hypot(b.x - x, b.y - y);
+            if (dist < minDistance) { valid = false; break; }
+          }
+        }
+
+        canvasTableState.balls.push({
+          id: i + 1,
+          x: Math.round(x),
+          y: Math.round(y),
+          color: color,
+          number: null,
+          potted: false
+        });
+      }
+
+      updateCanvasTrackerStrip();
+      drawPoolTable();
+      if (animate) triggerHaptic('light');
+    }
+
+    function resetCanvasTable() {
+      canvasTableState.isRandomized = false;
+      canvasTableState.currentTargetIndex = 1;
+      canvasTableState.balls = [];
+      updateCanvasTrackerStrip();
+      drawPoolTable();
+      triggerHaptic('light');
+    }
+
+    function resetCanvasTableAfterTry() {
+      canvasTableState.isRandomized = false;
+      canvasTableState.currentTargetIndex = 1;
+      const cfg = getCanvasTableConfig(currentLevel);
+      if (cfg) {
+        quickScatterCanvasBalls(false);
+      }
+    }
+
+    function randomizeCanvasBalls() {
+      if (canvasTableState.balls.length === 0) {
+        quickScatterCanvasBalls(false);
+      }
+      const cfg = getCanvasTableConfig(currentLevel);
+      const total = canvasTableState.balls.length;
+
+      if (cfg && cfg.hasBlack) {
+        let others = Array.from({length: total - 1}, (_, i) => i + 1);
+        for (let i = others.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [others[i], others[j]] = [others[j], others[i]];
+        }
+        let otherIdx = 0;
+        canvasTableState.balls.forEach(b => {
+          if (b.color === 'black') {
+            b.number = total;
+          } else {
+            b.number = others[otherIdx++];
+          }
+          b.potted = false;
+        });
+      } else {
+        let numbers = Array.from({length: total}, (_, i) => i + 1);
+        for (let i = numbers.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [numbers[i], numbers[j]] = [numbers[j], numbers[i]];
+        }
+        canvasTableState.balls.forEach((b, i) => {
+          b.number = numbers[i];
+          b.potted = false;
+        });
+      }
+
+      canvasTableState.isRandomized = true;
+      canvasTableState.currentTargetIndex = 1;
+      triggerHaptic('success');
+      updateCanvasTrackerStrip();
+      drawPoolTable();
+    }
+
+    function potCanvasTargetBall() {
+      if (!canvasTableState.isRandomized) return;
+      const curr = canvasTableState.currentTargetIndex;
+      const targetBall = canvasTableState.balls.find(b => b.number === curr);
+
+      if (targetBall) {
+        targetBall.potted = true;
+      }
+      triggerHaptic('light');
+      canvasTableState.currentTargetIndex++;
+
+      const unpotted = canvasTableState.balls.filter(b => !b.potted);
+      if (unpotted.length === 0) {
+        triggerHaptic('success');
+      }
+
+      updateCanvasTrackerStrip();
+      drawPoolTable();
+    }
+
+    function updateCanvasTrackerStrip() {
+      const strip = document.getElementById('target-tracker-strip');
+      const label = document.getElementById('target-ball-label');
+      const counter = document.getElementById('target-step-counter');
+      const potBtn = document.getElementById('btn-pot-next');
+
+      if (!canvasTableState.isRandomized || canvasTableState.balls.length === 0) {
+        if (strip) strip.style.display = 'none';
+        return;
+      }
+
+      if (strip) strip.style.display = 'flex';
+      const total = canvasTableState.balls.length;
+      const curr = canvasTableState.currentTargetIndex;
+      const targetBall = canvasTableState.balls.find(b => b.number === curr);
+
+      if (curr > total) {
+        label.innerText = '✓ Rack Cleared!';
+        label.style.background = 'var(--success)';
+        counter.innerText = 'All Potted';
+        potBtn.innerText = '✓ Log Success Rack (+ Win)';
+        potBtn.onclick = function() {
+          logTry('win');
+        };
+      } else if (targetBall) {
+        const colorName = targetBall.color === 'red' ? '🔴 Red' : (targetBall.color === 'yellow' ? '🟡 Yellow' : '⚫ Black 8');
+        label.innerText = `Ball #${curr} (${colorName})`;
+        label.style.background = targetBall.color === 'red' ? '#ef4444' : (targetBall.color === 'yellow' ? '#d97706' : '#1e293b');
+        counter.innerText = `${curr} of ${total}`;
+        potBtn.innerText = `✓ Potted #${curr} (${colorName}) - Next`;
+        potBtn.onclick = potCanvasTargetBall;
+      }
+    }
+
+    function drawPoolTable() {
+      const canvas = document.getElementById('poolTableCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      if (canvas.width !== 400 || canvas.height !== 200) {
+        canvas.width = 400;
+        canvas.height = 200;
+      }
+
+      ctx.clearRect(0, 0, 400, 200);
+
+      // Outer Wood Frame
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(0, 0, 400, 200);
+
+      // Playing Surface (English Green Baize)
+      const clothX = 18, clothY = 18, clothW = 364, clothH = 164;
+      ctx.fillStyle = '#14532d';
+      ctx.fillRect(clothX, clothY, clothW, clothH);
+
+      // Cushions Bevel Border
+      ctx.strokeStyle = '#166534';
+      ctx.lineWidth = 2.5;
+      ctx.strokeRect(clothX, clothY, clothW, clothH);
+
+      // Baulk Line & The 'D'
+      const baulkX = 105;
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(baulkX, clothY);
+      ctx.lineTo(baulkX, clothY + clothH);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(baulkX, clothY + clothH / 2, 34, Math.PI * 0.5, Math.PI * 1.5, false);
+      ctx.stroke();
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+      ctx.beginPath();
+      ctx.arc(baulkX, clothY + clothH / 2, 2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(280, clothY + clothH / 2, 2, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Pockets
+      const pockets = [
+        { x: 18, y: 18, r: 13 },
+        { x: 200, y: 16, r: 11 },
+        { x: 382, y: 18, r: 13 },
+        { x: 18, y: 182, r: 13 },
+        { x: 200, y: 184, r: 11 },
+        { x: 382, y: 182, r: 13 }
+      ];
+
+      pockets.forEach(p => {
+        ctx.fillStyle = '#020617';
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#334155';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      });
+
+      // Balls
+      const ballRadius = 12.5;
+      const curr = canvasTableState.currentTargetIndex;
+
+      canvasTableState.balls.forEach((ball) => {
+        const isTarget = canvasTableState.isRandomized && ball.number === curr && !ball.potted;
+
+        ctx.save();
+        if (ball.potted) {
+          ctx.globalAlpha = 0.22;
+        }
+
+        if (isTarget) {
+          ctx.strokeStyle = '#38bdf8';
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.arc(ball.x, ball.y, ballRadius + 4, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+        ctx.beginPath();
+        ctx.arc(ball.x + 1.5, ball.y + 1.5, ballRadius, 0, Math.PI * 2);
+        ctx.fill();
+
+        let baseColor = ball.color === 'red' ? '#dc2626' : (ball.color === 'yellow' ? '#f59e0b' : '#1e293b');
+        let highlightColor = ball.color === 'red' ? '#f87171' : (ball.color === 'yellow' ? '#fef08a' : '#475569');
+
+        let grad = ctx.createRadialGradient(
+          ball.x - 3.5, ball.y - 3.5, 1,
+          ball.x, ball.y, ballRadius
+        );
+        grad.addColorStop(0, highlightColor);
+        grad.addColorStop(0.5, baseColor);
+        grad.addColorStop(1, '#0f172a');
+
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(ball.x, ball.y, ballRadius, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        if (ball.number !== null) {
+          ctx.fillStyle = ball.color === 'yellow' ? '#0f172a' : '#ffffff';
+          ctx.font = 'bold 11px -apple-system, BlinkMacSystemFont, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(ball.number, ball.x, ball.y + 0.5);
+        } else {
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+          ctx.beginPath();
+          ctx.arc(ball.x, ball.y, 2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        if (ball.potted) {
+          ctx.fillStyle = '#16a34a';
+          ctx.font = 'bold 13px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('✓', ball.x, ball.y);
+        }
+
+        ctx.restore();
+      });
+    }
+
+    function initCanvasTableListeners() {
+      const canvas = document.getElementById('poolTableCanvas');
+      if (!canvas || canvasTableState.isInitializedEvents) return;
+      canvasTableState.isInitializedEvents = true;
+
+      function getCoords(e) {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches && e.touches.length > 0 ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches && e.touches.length > 0 ? e.touches[0].clientY : e.clientY;
+        const scaleX = 400 / rect.width;
+        const scaleY = 200 / rect.height;
+        return {
+          x: Math.max(26, Math.min(374, (clientX - rect.left) * scaleX)),
+          y: Math.max(26, Math.min(174, (clientY - rect.top) * scaleY))
+        };
+      }
+
+      function handlePointerDown(e) {
+        const pt = getCoords(e);
+        const touchRadius = 18;
+
+        let foundIdx = -1;
+        for (let i = canvasTableState.balls.length - 1; i >= 0; i--) {
+          const b = canvasTableState.balls[i];
+          if (Math.hypot(b.x - pt.x, b.y - pt.y) <= touchRadius) {
+            foundIdx = i;
+            break;
+          }
+        }
+
+        if (foundIdx >= 0) {
+          canvasTableState.draggingIndex = foundIdx;
+          const ball = canvasTableState.balls[foundIdx];
+          if (canvasTableState.isRandomized && ball.number === canvasTableState.currentTargetIndex && !ball.potted) {
+            potCanvasTargetBall();
+            canvasTableState.draggingIndex = -1;
+            return;
+          }
+        } else if (!canvasTableState.isRandomized && canvasTableState.balls.length < canvasTableState.targetCount) {
+          const cfg = getCanvasTableConfig(currentLevel);
+          let color = (canvasTableState.balls.length % 2 === 0) ? 'red' : 'yellow';
+          if (cfg && cfg.hasBlack && canvasTableState.balls.length === canvasTableState.targetCount - 1) {
+            color = 'black';
+          }
+          canvasTableState.balls.push({
+            id: canvasTableState.balls.length + 1,
+            x: Math.round(pt.x),
+            y: Math.round(pt.y),
+            color: color,
+            number: null,
+            potted: false
+          });
+          triggerHaptic('light');
+          drawPoolTable();
+        }
+      }
+
+      function handlePointerMove(e) {
+        if (canvasTableState.draggingIndex < 0) return;
+        const pt = getCoords(e);
+        const ball = canvasTableState.balls[canvasTableState.draggingIndex];
+        if (ball) {
+          ball.x = Math.round(pt.x);
+          ball.y = Math.round(pt.y);
+          drawPoolTable();
+        }
+      }
+
+      function handlePointerUp() {
+        if (canvasTableState.draggingIndex >= 0) {
+          canvasTableState.draggingIndex = -1;
+          drawPoolTable();
+        }
+      }
+
+      canvas.addEventListener('pointerdown', handlePointerDown, { passive: false });
+      window.addEventListener('pointermove', handlePointerMove, { passive: false });
+      window.addEventListener('pointerup', handlePointerUp);
+      window.addEventListener('pointercancel', handlePointerUp);
     }
 
     // ==========================================
@@ -2060,14 +2546,14 @@
       const targetLvl = parseInt(val);
       if (history.length === 0 && currentRound.length === 0) {
         currentLevel = targetLvl;
-        rotCurrentIndex = 0;
+        resetCanvasTableAfterTry();
         saveData();
         updateUI();
       } else if (confirm(`Changing start level to Level ${targetLvl} resets current session history. Continue?`)) {
         currentLevel = targetLvl;
         history = [];
         currentRound = [];
-        rotCurrentIndex = 0;
+        resetCanvasTableAfterTry();
         saveData();
         updateUI();
       } else {
@@ -2077,7 +2563,7 @@
 
     function logTry(result) {
       triggerHaptic(result === 'win' ? 'light' : 'warning');
-      rotCurrentIndex = 0;
+      resetCanvasTableAfterTry();
 
       let roundResult = null;
       let nextLevel = currentLevel;
@@ -2117,7 +2603,7 @@
     function undo() {
       if (history.length === 0) return;
       triggerHaptic('light');
-      rotCurrentIndex = 0;
+      resetCanvasTableAfterTry();
       let lastState = history.pop();
       currentLevel = lastState.level;
 
@@ -2141,7 +2627,7 @@
         currentLevel = parseInt(selectEl.value) || 1;
         currentRound = [];
         history = [];
-        rotCurrentIndex = 0;
+        resetCanvasTableAfterTry();
         localStorage.removeItem('levelTracker_history');
         localStorage.removeItem('levelTracker_level');
         localStorage.removeItem('levelTracker_round');
@@ -2163,8 +2649,8 @@
       document.getElementById('level-tier-badge').innerText = lvlInfo.rating;
       document.getElementById('drill-summary-text').innerText = lvlInfo.summary;
 
-      // Update Rotation Assistant (Point 4B)
-      updateRotationToolUI();
+      // Update 2D Canvas Pool Table (Levels 10, 13, 14, 15, 16)
+      updateCanvasTableUI();
 
       // 3 Large Status Circles (No stake description)
       const count = currentRound.length;
@@ -2453,10 +2939,44 @@
         document.getElementById('ana-momentum-desc').innerText = 'Play at least 12 racks to establish baseline.';
       }
 
-      // 4. Subjective / Empirical Difficulty Weighting (English Pool Model)
-      // English pool difficulty weights reflect that Any Order (L7/L11) has higher table congestion than 8-ball (L8/L12)
-      const englishWeights = [1, 2, 3, 4, 5, 6, 8.2, 7.2, 9.5, 10.0, 12.0, 10.8, 13.0, 12.5, 14.5, 16.0];
-      const weights = englishWeights;
+      // 4. Subjective & Empirical Difficulty Weighting (English Pool Model)
+      // English pool baseline difficulty reflects table crowdedness, cluster dynamics, and shot choice:
+      // - L3-L5: 6 balls any order with 3, 2, 1 extra BIH (L5 is 6 pots with 1 BIH = 5.6)
+      // - L6: 7 balls on table, but only 4 pots needed (3 suit + 8) with suit choice! Weight = 5.2 (often easier than L5)
+      // - L7: 9 balls any order with 1 extra BIH. Extreme cluster traffic on small English tables = 8.6
+      // - L8: 9 balls (8-ball rules) with 1 extra BIH. Only 5 pots needed (4 suit + 8) = 7.2 (noticeably easier than L7)
+      // - L9: 15 balls any order with 2 extra BIHs. Maximum table density = 9.4
+      // - L10: 6 balls in rotation, 0 extra BIH. Rotation removes shot choice; high cue-ball precision = 10.2
+      // - L11: 15 balls any order, 0 extra BIH. Brutal congestion = 12.4
+      // - L12: 15 balls 8-ball rules (7 suit + 8 = 8 pots), 0 extra BIH = 11.2 (easier than L11)
+      // - L13: 9 balls 8-ball + rotation = 13.0
+      // - L14: 9 balls rotation = 13.8
+      // - L15: 15 balls 8-ball + rotation = 15.0
+      // - L16: 15 balls full rotation = 16.0
+      let weights = [1.0, 2.0, 3.0, 4.2, 5.6, 5.2, 8.6, 7.2, 9.4, 10.2, 12.4, 11.2, 13.0, 13.8, 15.0, 16.0];
+
+      // Empirical Inversion Detection (Bayesian update from user history without circular reasoning)
+      let activeInversions = [];
+      const testPairs = [
+        { low: 5, high: 6, labelLow: 'L5 (6 pots)', labelHigh: 'L6 (4 pots)' },
+        { low: 7, high: 8, labelLow: 'L7 (9 any-order)', labelHigh: 'L8 (8-ball)' },
+        { low: 9, high: 10, labelLow: 'L9 (15-ball)', labelHigh: 'L10 (Rotation)' },
+        { low: 11, high: 12, labelLow: 'L11 (15 any-order)', labelHigh: 'L12 (15 8-ball)' }
+      ];
+
+      testPairs.forEach(pair => {
+        let cntLow = levelCounts[pair.low - 1];
+        let cntHigh = levelCounts[pair.high - 1];
+        if (cntLow.totalRacks >= 3 && cntHigh.totalRacks >= 3) {
+          let rLow = (cntLow.rackWins / cntLow.totalRacks) * 100;
+          let rHigh = (cntHigh.rackWins / cntHigh.totalRacks) * 100;
+          if (rLow < rHigh) {
+            let diff = rHigh - rLow;
+            activeInversions.push(`${pair.labelLow} (${rLow.toFixed(0)}%) < ${pair.labelHigh} (${rHigh.toFixed(0)}%)`);
+            weights[pair.low - 1] = Math.max(weights[pair.low - 1], weights[pair.high - 1] + Math.min(1.2, diff * 0.025));
+          }
+        }
+      });
 
       let weightedSum = recentWindow.reduce((s, h) => s + (weights[h.level - 1] || h.level), 0);
       let avgDifficulty = weightedSum / recentWindow.length;
@@ -2469,25 +2989,16 @@
 
       document.getElementById('ana-rating').innerText = `Lvl ${dacs.toFixed(1)} \u00b7 ${ratingObj.rating}`;
 
-      // Empirical Difficulty Inversion Check: L7 vs L8
-      let l7cnt = levelCounts[6];
-      let l8cnt = levelCounts[7];
       let elabEl = document.getElementById('ana-rating-elaboration');
-
-      if (l7cnt.totalRacks >= 3 && l8cnt.totalRacks >= 3) {
-        let r7 = (l7cnt.rackWins / l7cnt.totalRacks) * 100;
-        let r8 = (l8cnt.rackWins / l8cnt.totalRacks) * 100;
-        if (r7 < r8) {
-          document.getElementById('ana-rating-desc').innerText = 
-            `Empirical Inversion: Lvl 7 (${r7.toFixed(0)}%) is tougher than Lvl 8 (${r8.toFixed(0)}%) due to English pool congestion.`;
-          elabEl.innerHTML = `<strong>English Table Dynamics:</strong> Clearing 9 balls in any order (L7) creates heavy cluster traps on small tables, whereas 8-ball (L8) only requires 4 group balls + 8. The model awards bonus credit for L7.`;
-          return;
-        }
+      if (activeInversions.length > 0) {
+        document.getElementById('ana-rating-desc').innerText = 
+          `Empirical Inversions: ${activeInversions.join('; ')}.`;
+        elabEl.innerHTML = `<strong>Empirically Calibrated English Model:</strong> Accounts for small-table congestion. Higher ball counts with any-order rules (L7/L11) generate heavy cluster traps compared to 8-ball rules (L6/L8/L12) where you pot fewer balls with open suit choice. Your logged win rates dynamically tune these relative difficulty weights.`;
+      } else {
+        document.getElementById('ana-rating-desc').innerText = 
+          `Recent 35 racks: Avg Difficulty ${avgDifficulty.toFixed(1)} with ${(recentWinRate * 100).toFixed(1)}% runouts.`;
+        elabEl.innerHTML = `<strong>English Table Dynamics:</strong> Table crowdedness model calibrated: L5 (6 pots) vs L6 (4 pots 8-ball); L7 (9 congested balls) vs L8 (5 balls 8-ball); L9 (15-ball traffic) vs L10 (precision rotation).`;
       }
-
-      document.getElementById('ana-rating-desc').innerText = 
-        `Recent 35 racks: Avg Difficulty ${avgDifficulty.toFixed(1)} with ${(recentWinRate * 100).toFixed(1)}% runouts.`;
-      elabEl.innerHTML = `<strong>English Pool Model:</strong> Normalizes non-linear drill difficulty on English tables: congested any-order traffic (L7/L11) is weighted heavier than 8-ball sets (L8/L12).`;
     }
 
     // ==========================================
