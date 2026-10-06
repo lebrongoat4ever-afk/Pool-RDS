@@ -152,40 +152,7 @@
       box-shadow: 0 1px 2px rgba(0,0,0,0.06);
     }
 
-    /* Discipline Toggle Bar (English Pool vs American) */
-    .discipline-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: var(--card-sub);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 5px 10px;
-      margin-bottom: 10px;
-      font-size: 11.5px;
-    }
 
-    .discipline-btn-group {
-      display: inline-flex;
-      gap: 4px;
-    }
-
-    .discipline-btn {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      font-size: 11px;
-      font-weight: 600;
-      padding: 3px 8px;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    .discipline-btn.active {
-      background: var(--accent);
-      color: #ffffff;
-      border-color: var(--accent);
-    }
 
     /* Cards */
     .card {
@@ -910,14 +877,7 @@
       <button class="mode-tab-btn" id="tab-exam-btn" onclick="switchGameMode('exam')">100-Point Exam (1-Try)</button>
     </div>
 
-    <!-- Discipline Toggle (English Pool vs American) -->
-    <div class="discipline-row">
-      <span style="font-weight:600; color:var(--muted);">Discipline:</span>
-      <div class="discipline-btn-group">
-        <button class="discipline-btn active" id="btn-english" onclick="setDiscipline('english')">English Pool (Reds &amp; Yellows)</button>
-        <button class="discipline-btn" id="btn-american" onclick="setDiscipline('american')">American (Numbered)</button>
-      </div>
-    </div>
+
 
     <!-- ========================================== -->
     <!-- VIEW 1: LADDER MODE (3-TRY ADVANCE/DROP)   -->
@@ -1314,8 +1274,8 @@
     // Game Mode: 'ladder' | 'exam'
     let activeGameMode = 'ladder';
 
-    // Discipline: 'english' (Reds & Yellows) | 'american' (Solids & Stripes)
-    let activeDiscipline = localStorage.getItem('levelTracker_discipline') || 'english';
+    // Discipline: English Pool (Reds & Yellows)
+    const activeDiscipline = 'english';
 
     // Rotation Tool State (for English Pool on Levels 10, 13, 14, 15, 16)
     let rotCurrentIndex = 0;
@@ -1399,8 +1359,6 @@
       } else {
         document.getElementById('theme-btn').innerText = 'Dark';
       }
-
-      updateDisciplineUI();
     }
 
     function saveData() {
@@ -1460,17 +1418,6 @@
       }
     }
 
-    function setDiscipline(disc) {
-      activeDiscipline = disc;
-      localStorage.setItem('levelTracker_discipline', disc);
-      updateDisciplineUI();
-      updateUI();
-    }
-
-    function updateDisciplineUI() {
-      document.getElementById('btn-english').classList.toggle('active', activeDiscipline === 'english');
-      document.getElementById('btn-american').classList.toggle('active', activeDiscipline === 'american');
-    }
 
     // Determine Attempt Outcome Backwards-Compatible
     function getAttemptResult(entry, index, historyArr, currentRoundArr) {
@@ -1671,23 +1618,52 @@
           datalabels: {
             color: '#ffffff',
             font: { weight: '700', size: 9.5 },
+            clip: true,
+            clamp: true,
+            display: (ctx) => {
+              const val = ctx.dataset.data[ctx.dataIndex];
+              if (!val || val <= 0) return false;
+              if (efficiencyDisplayMode === 'pct') {
+                return val >= 14;
+              } else {
+                // In count mode: prevent crowding on less-played levels and narrow slices
+                const rawTotals = ctx.chart.data.rawTotals;
+                const total = (rawTotals && rawTotals[ctx.dataIndex]) !== undefined ? rawTotals[ctx.dataIndex] : 0;
+                if (total < 4) return false;
+                const maxTotal = (rawTotals && rawTotals.length > 0) ? Math.max(...rawTotals, 1) : 1;
+                return (val / maxTotal) >= 0.15 && val >= 3;
+              }
+            },
             formatter: (value, ctx) => {
               if (value === 0) return '';
-              let datasets = ctx.chart.data.datasets;
-              let total = datasets.reduce((sum, ds) => sum + (ds.data[ctx.dataIndex] || 0), 0);
+              const rawTotals = ctx.chart.data.rawTotals;
+              const rawCounts = ctx.chart.data.rawCounts;
+              const total = (rawTotals && rawTotals[ctx.dataIndex]) !== undefined ? rawTotals[ctx.dataIndex] : 0;
+              const count = (rawCounts && rawCounts[ctx.datasetIndex]) ? rawCounts[ctx.datasetIndex][ctx.dataIndex] : value;
               if (total === 0) return '';
-              let pct = Math.round((value / total) * 100);
-              return (pct >= 14 && value >= 2) ? `${pct}%` : '';
+              const pct = Math.round((count / total) * 100);
+              return `${pct}%`;
             }
           },
           tooltip: {
             callbacks: {
+              title: (contexts) => {
+                if (!contexts || contexts.length === 0) return '';
+                const dataIdx = contexts[0].dataIndex;
+                const rawTotals = contexts[0].chart.data.rawTotals;
+                const total = (rawTotals && rawTotals[dataIdx]) !== undefined ? rawTotals[dataIdx] : 0;
+                const label = contexts[0].chart.data.labels[dataIdx] || '';
+                return `${label} · ${total} ${total === 1 ? 'set' : 'sets'} played`;
+              },
               label: (context) => {
-                let val = context.raw || 0;
-                let datasets = context.chart.data.datasets;
-                let total = datasets.reduce((sum, ds) => sum + (ds.data[context.dataIndex] || 0), 0);
-                let pct = total > 0 ? Math.round((val / total) * 100) : 0;
-                return `${context.dataset.label}: ${val} sets (${pct}%)`;
+                const dsIdx = context.datasetIndex;
+                const dataIdx = context.dataIndex;
+                const rawCounts = context.chart.data.rawCounts;
+                const rawTotals = context.chart.data.rawTotals;
+                const count = (rawCounts && rawCounts[dsIdx]) ? rawCounts[dsIdx][dataIdx] : (context.raw || 0);
+                const total = (rawTotals && rawTotals[dataIdx]) !== undefined ? rawTotals[dataIdx] : 0;
+                const pct = total > 0 ? ((count / total) * 100).toFixed(1) : '0.0';
+                return ` ${context.dataset.label}: ${count} ${count === 1 ? 'set' : 'sets'} (${pct}%)`;
               }
             }
           },
@@ -2034,7 +2010,7 @@
       const box = document.getElementById('rotation-box');
       const seq = getRotationSequenceForLevel(currentLevel);
 
-      if (!seq || activeDiscipline !== 'english') {
+      if (!seq) {
         box.classList.remove('active');
         return;
       }
@@ -2363,10 +2339,22 @@
       let data1_3 = [];
       let data0_3 = [];
 
+      let rawCounts2_2 = [];
+      let rawCounts2_3 = [];
+      let rawCounts1_3 = [];
+      let rawCounts0_3 = [];
+      let rawTotals = [];
+
       activeIndices.forEach(idx => {
         let cnt = levelCounts[idx];
         let total = cnt.setsTotal;
-        effLabels.push(`Lvl ${idx + 1} (${total})`);
+        effLabels.push(`Lvl ${idx + 1} (${total} ${total === 1 ? 'set' : 'sets'})`);
+        rawTotals.push(total);
+
+        rawCounts2_2.push(cnt.twoOfTwo);
+        rawCounts2_3.push(cnt.twoOfThree);
+        rawCounts1_3.push(cnt.oneOfThree);
+        rawCounts0_3.push(cnt.zeroOfThree);
 
         if (efficiencyDisplayMode === 'pct' && total > 0) {
           data2_2.push(Math.round((cnt.twoOfTwo / total) * 100));
@@ -2385,6 +2373,8 @@
       breakdownChart.options.scales.x.max = efficiencyDisplayMode === 'pct' ? 100 : undefined;
 
       breakdownChart.data.labels = effLabels;
+      breakdownChart.data.rawCounts = [rawCounts2_2, rawCounts2_3, rawCounts1_3, rawCounts0_3];
+      breakdownChart.data.rawTotals = rawTotals;
       breakdownChart.data.datasets[0].data = data2_2;
       breakdownChart.data.datasets[1].data = data2_3;
       breakdownChart.data.datasets[2].data = data1_3;
@@ -2423,11 +2413,11 @@
       if (currStats.totalRacks === 0) {
         document.getElementById('ana-threshold-desc').innerText = `No attempts logged at Level ${currentLevel} yet.`;
       } else if (currRackSuccess >= 61.8) {
-        document.getElementById('ana-threshold-desc').innerText = `Above the 61.8% break-even mark. Statistically favored to promote.`;
+        document.getElementById('ana-threshold-desc').innerText = `${currStats.rackWins}/${currStats.totalRacks} racks won at Lvl ${currentLevel}. Above 61.8% (favored to advance).`;
       } else if (currRackSuccess >= 35.0) {
-        document.getElementById('ana-threshold-desc').innerText = `Within hold range (35%–61%). Expected to maintain level.`;
+        document.getElementById('ana-threshold-desc').innerText = `${currStats.rackWins}/${currStats.totalRacks} racks won at Lvl ${currentLevel}. Within hold range (35%–61%).`;
       } else {
-        document.getElementById('ana-threshold-desc').innerText = `Below 35%. Likely to trigger 0/3 demotion without tighter runouts.`;
+        document.getElementById('ana-threshold-desc').innerText = `${currStats.rackWins}/${currStats.totalRacks} racks won at Lvl ${currentLevel}. Below 35% hold threshold.`;
       }
 
       // 2. Variance & Volatility
@@ -2463,11 +2453,10 @@
         document.getElementById('ana-momentum-desc').innerText = 'Play at least 12 racks to establish baseline.';
       }
 
-      // 4. Subjective / Empirical Difficulty Weighting (Point 4A)
+      // 4. Subjective / Empirical Difficulty Weighting (English Pool Model)
       // English pool difficulty weights reflect that Any Order (L7/L11) has higher table congestion than 8-ball (L8/L12)
       const englishWeights = [1, 2, 3, 4, 5, 6, 8.2, 7.2, 9.5, 10.0, 12.0, 10.8, 13.0, 12.5, 14.5, 16.0];
-      const americanWeights = [1, 2, 3, 4, 5, 6, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0];
-      const weights = activeDiscipline === 'english' ? englishWeights : americanWeights;
+      const weights = englishWeights;
 
       let weightedSum = recentWindow.reduce((s, h) => s + (weights[h.level - 1] || h.level), 0);
       let avgDifficulty = weightedSum / recentWindow.length;
@@ -2485,7 +2474,7 @@
       let l8cnt = levelCounts[7];
       let elabEl = document.getElementById('ana-rating-elaboration');
 
-      if (activeDiscipline === 'english' && l7cnt.totalRacks >= 3 && l8cnt.totalRacks >= 3) {
+      if (l7cnt.totalRacks >= 3 && l8cnt.totalRacks >= 3) {
         let r7 = (l7cnt.rackWins / l7cnt.totalRacks) * 100;
         let r8 = (l8cnt.rackWins / l8cnt.totalRacks) * 100;
         if (r7 < r8) {
@@ -2498,7 +2487,7 @@
 
       document.getElementById('ana-rating-desc').innerText = 
         `Recent 35 racks: Avg Difficulty ${avgDifficulty.toFixed(1)} with ${(recentWinRate * 100).toFixed(1)}% runouts.`;
-      elabEl.innerHTML = `<strong>${activeDiscipline === 'english' ? 'English Pool Model' : 'Standard Model'}:</strong> Normalizes non-linear drill difficulty: ${activeDiscipline === 'english' ? 'Any-order traffic weighted heavier than 8-ball sets.' : 'Standard 16-level progression.'}`;
+      elabEl.innerHTML = `<strong>English Pool Model:</strong> Normalizes non-linear drill difficulty on English tables: congested any-order traffic (L7/L11) is weighted heavier than 8-ball sets (L8/L12).`;
     }
 
     // ==========================================
@@ -2726,7 +2715,6 @@
             currentLevel = Math.min(16, Math.max(1, imported.ladder.level || 1));
             currentRound = Array.isArray(imported.ladder.round) ? imported.ladder.round : [];
             if (imported.exam100) rds100 = imported.exam100;
-            if (imported.discipline) setDiscipline(imported.discipline);
           } else if (imported.history && Array.isArray(imported.history)) {
             history = imported.history;
             currentLevel = Math.min(16, Math.max(1, imported.level || 1));
