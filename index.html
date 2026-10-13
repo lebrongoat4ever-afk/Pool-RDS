@@ -323,7 +323,8 @@
     .canvas-viewport-wrap {
       position: relative;
       width: 100%;
-      aspect-ratio: 2 / 1;
+      aspect-ratio: 16 / 10;
+      min-height: 250px;
       border-radius: 8px;
       overflow: hidden;
       box-shadow: 0 2px 6px rgba(0,0,0,0.25);
@@ -351,7 +352,7 @@
 
     .btn-table-action {
       flex: 1;
-      padding: 7px 6px;
+      padding: 8px 6px;
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
@@ -372,44 +373,6 @@
     .btn-table-action:active {
       filter: brightness(0.92);
     }
-
-    .target-tracker-strip {
-      margin-top: 8px;
-      padding-top: 8px;
-      border-top: 1px dashed var(--border);
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .target-indicator-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .target-pill {
-      font-size: 11.5px;
-      font-weight: 800;
-      padding: 2px 10px;
-      border-radius: 12px;
-      background: var(--accent);
-      color: #ffffff;
-    }
-
-    .btn-pot-next {
-      width: 100%;
-      padding: 8px 10px;
-      background: var(--success);
-      color: #ffffff;
-      border: none;
-      border-radius: var(--radius-sm);
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .btn-pot-next:active { background: var(--success-active); }
 
     /* 3-Try Status Bar (Compact, larger circles, no stake text) */
     .round-bar {
@@ -903,7 +866,7 @@
 
     .balls-left-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(82px, 1fr));
       gap: 6px;
       margin-top: 8px;
     }
@@ -911,19 +874,86 @@
     .btn-ball-deduct {
       background: var(--card-sub);
       border: 1px solid var(--border);
-      padding: 8px 4px;
+      padding: 9px 5px;
       font-size: 11.5px;
       font-weight: 700;
       border-radius: var(--radius-sm);
       color: var(--text);
       cursor: pointer;
       text-align: center;
+      line-height: 1.25;
     }
 
     .btn-ball-deduct:active, .btn-ball-deduct.selected {
       background: var(--failure);
       border-color: var(--failure);
       color: #ffffff;
+    }
+
+    .exam-stat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .exam-stat-box {
+      background: var(--card-sub);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 8px;
+      text-align: center;
+    }
+
+    .exam-stat-num {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .exam-stat-lbl {
+      font-size: 10.5px;
+      color: var(--muted);
+      margin-top: 2px;
+      font-weight: 600;
+    }
+
+    .exam-chart-wrap {
+      position: relative;
+      width: 100%;
+      height: 220px;
+      margin-top: 10px;
+    }
+
+    .exam-history-toolbar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .exam-history-select {
+      flex: 1;
+      padding: 6px 8px;
+      font-size: 12px;
+      background: var(--card-sub);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      outline: none;
+    }
+
+    .exam-rule-hint {
+      background: rgba(2, 132, 199, 0.08);
+      border-left: 3px solid var(--accent);
+      padding: 8px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      color: var(--text);
+      margin-bottom: 10px;
+      line-height: 1.4;
+      text-align: left;
     }
   </style>
 </head>
@@ -970,53 +1000,38 @@
           </div>
         </div>
 
-        <!-- 2D Canvas Pool Table & Ball Randomizer (For Levels 10, 13, 14, 15, 16) -->
-        <div class="canvas-table-box" id="canvas-table-box">
-          <div class="table-tool-header">
-            <div class="table-tool-title">
-              <span>Table Ball Randomizer</span>
-              <span class="table-tool-subtitle" id="table-level-hint">Map &amp; Randomize Target Order</span>
+        <!-- Anchor for 2D Canvas Pool Table & Ball Randomizer -->
+        <div id="ladder-canvas-anchor">
+          <div class="canvas-table-box" id="canvas-table-box">
+            <div class="table-tool-header">
+              <div class="table-tool-title">
+                <span>Table Ball Randomizer</span>
+                <span class="table-tool-subtitle" id="table-level-hint">Map &amp; Randomize Target Order</span>
+              </div>
+              <div class="table-count-control">
+                <span style="font-size:11px; color:var(--muted); font-weight:600;">Balls:</span>
+                <button class="btn-count-adj" onclick="adjustCanvasBallCount(-1)">−</button>
+                <span id="canvas-ball-count-val" class="ball-count-badge">6</span>
+                <button class="btn-count-adj" onclick="adjustCanvasBallCount(1)">+</button>
+              </div>
             </div>
-            <div class="table-count-control">
-              <span style="font-size:11px; color:var(--muted); font-weight:600;">Balls:</span>
-              <button class="btn-count-adj" onclick="adjustCanvasBallCount(-1)">−</button>
-              <span id="canvas-ball-count-val" class="ball-count-badge">6</span>
-              <button class="btn-count-adj" onclick="adjustCanvasBallCount(1)">+</button>
+
+            <div class="table-note-banner" id="table-note-banner">
+              Tap cloth to place red balls. Drag freely at any time (even during play if balls are moved by cannons). Tap <strong>Randomize Order</strong> to assign numbers.
             </div>
-          </div>
 
-          <div class="table-note-banner" id="table-note-banner">
-            Tap or drag balls to match physical table positions, then tap <strong>Randomize Order</strong>.
-          </div>
-
-          <!-- The 2D Pool Table Canvas -->
-          <div class="canvas-viewport-wrap">
-            <canvas id="poolTableCanvas"></canvas>
-          </div>
-
-          <!-- Table Controls -->
-          <div class="table-action-bar">
-            <button class="btn-table-action primary" id="btn-randomize-order" onclick="randomizeCanvasBalls()">
-              🎲 Randomize Order
-            </button>
-            <button class="btn-table-action" id="btn-quick-scatter" onclick="quickScatterCanvasBalls()">
-              Auto-Place
-            </button>
-            <button class="btn-table-action" onclick="resetCanvasTable()">
-              Clear
-            </button>
-          </div>
-
-          <!-- Target Ball Tracker (Active after randomization) -->
-          <div class="target-tracker-strip" id="target-tracker-strip" style="display:none;">
-            <div class="target-indicator-row">
-              <span style="color:var(--muted); font-size:11px; font-weight:600;">Current Target:</span>
-              <span id="target-ball-label" class="target-pill">Ball #1</span>
-              <span id="target-step-counter" style="color:var(--muted); font-size:11px; font-weight:600;">1 of 6</span>
+            <!-- The 2D Pool Table Canvas -->
+            <div class="canvas-viewport-wrap">
+              <canvas id="poolTableCanvas"></canvas>
             </div>
-            <div class="target-pot-actions">
-              <button class="btn-pot-next" id="btn-pot-next" onclick="potCanvasTargetBall()">
-                ✓ Potted Target Ball (Next)
+
+            <!-- Table Controls (Auto-place and per-shot potting requirements removed) -->
+            <div class="table-action-bar">
+              <button class="btn-table-action primary" id="btn-randomize-order" onclick="randomizeCanvasBalls()">
+                🎲 Randomize Order
+              </button>
+              <button class="btn-table-action" onclick="resetCanvasTable()">
+                Clear Balls
               </button>
             </div>
           </div>
@@ -1107,11 +1122,11 @@
         </div>
         <div class="analytics-grid">
           <div class="metric-card">
-            <div class="metric-title">Promotion Benchmark (61.8%)</div>
+            <div class="metric-title" id="ana-threshold-title">Eventual Promotion Odds</div>
             <div class="metric-number" id="ana-threshold">0.0%</div>
-            <div class="metric-summary" id="ana-threshold-desc">Runout rate at current level vs required advance rate.</div>
-            <div class="metric-elaboration">
-              <strong>Why 61.8%?</strong> In a 3-try format where advancing requires 2 wins, the binomial break-even threshold is mathematically 61.8%. Above 61.8%, promotion is mathematically favored; between 35%–61%, you will hold; below 35%, demotion is likely.
+            <div class="metric-summary" id="ana-threshold-desc">Absorbing Markov chain likelihood of advancing before demoting.</div>
+            <div class="metric-elaboration" id="ana-threshold-elab">
+              <strong>Eventual Promotion vs Demotion:</strong> In Dr. Dave's 3-try format, you advance on 2/3 and demote on 0/3, repeating the level on 1/3 (Stay). This absorbing Markov chain yields: <em>P(Eventual Advance) = p&sup2;(3-2p) / [p&sup2;(3-2p) + (1-p)&sup3;]</em>. Break-even odds (50%) require only a <strong>34.7%</strong> rack win rate. A <strong>50%</strong> rack win rate yields an <strong>80.0%</strong> eventual promotion likelihood!
             </div>
           </div>
 
@@ -1286,7 +1301,8 @@
           <div class="exam-score-num" id="exam-live-score">100</div>
           <div style="font-size: 12px; color: var(--muted); margin-top: 4px;" id="exam-deducted-summary">Points Deducted: 0 · Level 1 of 16</div>
         </div>
-        <div style="text-align: right;">
+        <div style="text-align: right; display: flex; gap: 6px; align-items: center;">
+          <button class="btn-small" onclick="saveCurrentExamToHistory()" style="color: var(--accent); font-weight: 700;">Save Session</button>
           <button class="btn-small" onclick="resetExam()" style="color: var(--failure);">Reset Exam</button>
         </div>
       </div>
@@ -1297,9 +1313,15 @@
           <h2 id="exam-card-title">Level 1: 6 Balls Direct</h2>
           <span class="badge badge-advance" id="exam-card-balls">6 Balls</span>
         </div>
-        <div style="font-size: 12.5px; color: var(--text); margin-bottom: 10px; text-align: left;" id="exam-card-desc">
+        <div style="font-size: 12.5px; color: var(--text); margin-bottom: 8px; text-align: left;" id="exam-card-desc">
           Break a rack of 6 balls. 1 single attempt to run out.
         </div>
+
+        <!-- 8-Ball Rule Hint (Dynamic for Levels 6, 8, 12) -->
+        <div id="exam-8ball-hint" class="exam-rule-hint" style="display: none;"></div>
+
+        <!-- Dynamic Anchor for Ball Randomizer Tool (For Levels 10, 13, 14, 15, 16) -->
+        <div id="exam-canvas-anchor"></div>
 
         <button class="btn-action btn-success" style="width: 100%; margin-bottom: 12px;" onclick="logExamLevel(0)">
           ✓ CLEAN RUNOUT (0 Deducted)
@@ -1336,6 +1358,43 @@
           </table>
         </div>
       </div>
+
+      <!-- Exam History & Progression Card (Point 4) -->
+      <div class="card" id="exam-history-card">
+        <div class="card-header-row">
+          <h2>Exam History &amp; Progression</h2>
+          <span class="badge badge-advance" id="exam-stat-count">0 Sessions</span>
+        </div>
+
+        <div class="exam-stat-grid">
+          <div class="exam-stat-box">
+            <div class="exam-stat-num" id="exam-stat-best">--</div>
+            <div class="exam-stat-lbl">Best Score</div>
+          </div>
+          <div class="exam-stat-box">
+            <div class="exam-stat-num" id="exam-stat-avg">--</div>
+            <div class="exam-stat-lbl">Average Score</div>
+          </div>
+          <div class="exam-stat-box">
+            <div class="exam-stat-num" id="exam-stat-latest">--</div>
+            <div class="exam-stat-lbl">Latest Score</div>
+          </div>
+        </div>
+
+        <div class="exam-history-toolbar">
+          <select id="exam-history-select" class="exam-history-select" onchange="onSelectExamHistorySession()">
+            <option value="current">Live Session (In-Progress)</option>
+          </select>
+          <button class="btn-subtle" onclick="deleteSelectedExamSession()" id="btn-del-exam-session" style="color: var(--failure);" title="Delete selected session">Delete</button>
+        </div>
+
+        <div style="font-size: 11.5px; color: var(--muted); text-align: left; margin-top: 6px;">
+          Points remaining through 16 levels (100 &rarr; Final Score):
+        </div>
+        <div class="exam-chart-wrap">
+          <canvas id="examProgressChart"></canvas>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -1350,22 +1409,22 @@
     // 16 Official Drill Levels Metadata
     // ==========================================
     const LEVELS = [
-      { level: 1, title: "6 Balls Direct", rating: "Lower Novice", balls: 6, summary: "6 balls, pocket object balls directly with no cue ball." },
-      { level: 2, title: "6 Balls, BIH Every Shot", rating: "Mid Novice", balls: 6, summary: "6 balls, any order, cue ball in hand on every single shot." },
-      { level: 3, title: "6 Balls, 3 Extra BIHs", rating: "Upper Novice", balls: 6, summary: "6 balls, any order, BIH after break + 3 extra BIHs anytime." },
-      { level: 4, title: "6 Balls, 2 Extra BIHs", rating: "Lower Beginner (D-)", balls: 6, summary: "6 balls, any order, BIH after break + 2 extra BIHs anytime." },
-      { level: 5, title: "6 Balls, 1 Extra BIH", rating: "Mid Beginner (D)", balls: 6, summary: "6 balls, any order, BIH after break + 1 extra BIH anytime." },
-      { level: 6, title: "7 Balls (8-Ball), 1 Extra BIH", rating: "Upper Beginner (D+)", balls: 7, summary: "7 balls (3 reds, 3 yellows, 8), 8-ball rules, 1 extra BIH." },
-      { level: 7, title: "9 Balls, 1 Extra BIH", rating: "Lower Intermediate (C-)", balls: 9, summary: "9 balls, any order, BIH after break + 1 extra BIH anytime." },
-      { level: 8, title: "9 Balls (8-Ball), 1 Extra BIH", rating: "Mid Intermediate (C)", balls: 9, summary: "9 balls (4 reds, 4 yellows, 8), 8-ball rules, 1 extra BIH." },
-      { level: 9, title: "15 Balls, 2 Extra BIHs", rating: "Upper Intermediate (C+)", balls: 15, summary: "15 balls, any order, BIH after break + 2 extra BIHs anytime." },
-      { level: 10, title: "6 Balls In Rotation", rating: "Lower Advanced (B-)", balls: 6, summary: "6 balls in rotation (English pool: alternate Red/Yellow), BIH after break." },
-      { level: 11, title: "15 Balls Any Order", rating: "Mid Advanced (B)", balls: 15, summary: "15 balls, any order, BIH after break only." },
-      { level: 12, title: "15 Balls 8-Ball Rules", rating: "Upper Advanced (B+)", balls: 15, summary: "15 balls, standard 8-ball rules, BIH after break only." },
-      { level: 13, title: "9 Balls 8-Ball + Rotation", rating: "Lower Shortstop (A-)", balls: 9, summary: "9 balls: suit + 8, then remaining balls in rotation." },
-      { level: 14, title: "9 Balls 9-Ball Rules", rating: "Upper Shortstop (A)", balls: 9, summary: "Standard 9-ball rules in rotation, BIH after break." },
-      { level: 15, title: "15 Balls 8-Ball + Rotation", rating: "Semipro / Pro (A+/AA)", balls: 15, summary: "15 balls: suit + 8, then remaining 7 balls in rotation." },
-      { level: 16, title: "15 Balls In Rotation", rating: "World Class Pro (AAA)", balls: 15, summary: "15 balls in strict numerical rotation (1 to 15), BIH after break." }
+      { level: 1, title: "6 Balls Direct", rating: "Lower Novice", balls: 6, examBalls: 6, summary: "6 balls, pocket object balls directly with no cue ball." },
+      { level: 2, title: "6 Balls, BIH Every Shot", rating: "Mid Novice", balls: 6, examBalls: 6, summary: "6 balls, any order, cue ball in hand on every single shot." },
+      { level: 3, title: "6 Balls, 3 Extra BIHs", rating: "Upper Novice", balls: 6, examBalls: 6, summary: "6 balls, any order, BIH after break + 3 extra BIHs anytime." },
+      { level: 4, title: "6 Balls, 2 Extra BIHs", rating: "Lower Beginner (D-)", balls: 6, examBalls: 6, summary: "6 balls, any order, BIH after break + 2 extra BIHs anytime." },
+      { level: 5, title: "6 Balls, 1 Extra BIH", rating: "Mid Beginner (D)", balls: 6, examBalls: 6, summary: "6 balls, any order, BIH after break + 1 extra BIH anytime." },
+      { level: 6, title: "7 Balls (8-Ball), 1 Extra BIH", rating: "Upper Beginner (D+)", balls: 7, examBalls: 4, summary: "7 balls (3 reds, 3 yellows, 8), 8-ball rules, 1 extra BIH." },
+      { level: 7, title: "9 Balls, 1 Extra BIH", rating: "Lower Intermediate (C-)", balls: 9, examBalls: 9, summary: "9 balls, any order, BIH after break + 1 extra BIH anytime." },
+      { level: 8, title: "9 Balls (8-Ball), 1 Extra BIH", rating: "Mid Intermediate (C)", balls: 9, examBalls: 5, summary: "9 balls (4 reds, 4 yellows, 8), 8-ball rules, 1 extra BIH." },
+      { level: 9, title: "15 Balls, 2 Extra BIHs", rating: "Upper Intermediate (C+)", balls: 15, examBalls: 15, summary: "15 balls, any order, BIH after break + 2 extra BIHs anytime." },
+      { level: 10, title: "6 Balls In Rotation", rating: "Lower Advanced (B-)", balls: 6, examBalls: 6, summary: "6 balls in rotation (English pool: alternate Red/Yellow), BIH after break." },
+      { level: 11, title: "15 Balls Any Order", rating: "Mid Advanced (B)", balls: 15, examBalls: 15, summary: "15 balls, any order, BIH after break only." },
+      { level: 12, title: "15 Balls 8-Ball Rules", rating: "Upper Advanced (B+)", balls: 15, examBalls: 8, summary: "15 balls, standard 8-ball rules, BIH after break only." },
+      { level: 13, title: "9 Balls 8-Ball + Rotation", rating: "Lower Shortstop (A-)", balls: 9, examBalls: 9, summary: "9 balls: suit + 8, then remaining balls in rotation." },
+      { level: 14, title: "9 Balls 9-Ball Rules", rating: "Upper Shortstop (A)", balls: 9, examBalls: 9, summary: "Standard 9-ball rules in rotation, BIH after break." },
+      { level: 15, title: "15 Balls 8-Ball + Rotation", rating: "Semipro / Pro (A+/AA)", balls: 15, examBalls: 15, summary: "15 balls: suit + 8, then remaining 7 balls in rotation." },
+      { level: 16, title: "15 Balls In Rotation", rating: "World Class Pro (AAA)", balls: 15, examBalls: 15, summary: "15 balls in strict numerical rotation (1 to 15), BIH after break." }
     ];
 
     // ==========================================
@@ -1388,9 +1447,7 @@
     // Discipline: English Pool (Reds & Yellows)
     const activeDiscipline = 'english';
 
-
-
-    // RDS 100 State
+    // RDS 100 State & Exam History (Point 4)
     let rds100 = {
       currentLevel: 1,
       scores: Array.from({length: 16}, (_, i) => ({
@@ -1401,6 +1458,9 @@
         completed: false
       }))
     };
+    let rds100History = [];
+    let examProgressChart = null;
+    let selectedExamSessionId = 'current';
 
     function triggerHaptic(type = 'light') {
       if (navigator.vibrate) {
@@ -1432,6 +1492,7 @@
       const savedRound = localStorage.getItem('levelTracker_round');
       const savedTheme = localStorage.getItem('levelTracker_theme');
       const savedExam = localStorage.getItem('rds100_state');
+      const savedExamHistory = localStorage.getItem('rds100_history');
 
       if (savedHistory) {
         try {
@@ -1463,6 +1524,13 @@
         } catch(e) {}
       }
 
+      if (savedExamHistory) {
+        try {
+          const parsedEH = JSON.parse(savedExamHistory);
+          if (Array.isArray(parsedEH)) rds100History = parsedEH;
+        } catch(e) {}
+      }
+
       if (savedTheme === 'dark') {
         document.body.classList.add('dark-mode');
         document.getElementById('theme-btn').innerText = 'Light';
@@ -1479,6 +1547,10 @@
 
     function saveExamData() {
       localStorage.setItem('rds100_state', JSON.stringify(rds100));
+    }
+
+    function saveExamHistoryData() {
+      localStorage.setItem('rds100_history', JSON.stringify(rds100History));
     }
 
     function toggleTheme() {
@@ -1821,6 +1893,10 @@
         breakdownChart.options.plugins.legend.labels.color = textColor;
       }
       breakdownChart.update();
+
+      if (examProgressChart) {
+        renderExamProgressChart();
+      }
     }
 
     // ==========================================
@@ -2054,14 +2130,13 @@
 
     // ==========================================
     // 2D Canvas Pool Table & Ball Randomizer
-    // (Replaces static rotation assistant with true spatial randomness)
+    // (English Pool Red Balls, Continuous Dragging for Cannons, Dual Ladder/Exam Support)
     // ==========================================
     let canvasTableState = {
       level: null,
       targetCount: 6,
       balls: [],
       isRandomized: false,
-      currentTargetIndex: 1,
       draggingIndex: -1,
       isInitializedEvents: false
     };
@@ -2073,9 +2148,8 @@
           defaultCount: 6,
           maxCount: 6,
           minCount: 2,
-          hasBlack: false,
           title: "Level 10: 6 Balls Rotation",
-          hint: "Drag balls to match table positions, then tap 'Randomize Order' to assign shooting order."
+          hint: "Tap cloth to place 6 red balls to match table spread. Drag any ball at any time (even if nudged by cannons). Tap 'Randomize Order' to assign 1–6."
         };
       } else if (lvl === 13) {
         return {
@@ -2083,9 +2157,8 @@
           defaultCount: 4,
           maxCount: 4,
           minCount: 2,
-          hasBlack: false,
           title: "Level 13: 8-Ball + Rotation",
-          hint: "Shoot suit + 8-ball first under standard rules. Then map the remaining 4 balls here to randomize their rotation order."
+          hint: "Shoot suit + 8-ball first. Then place the remaining 4 balls here and tap 'Randomize Order'. Freely draggable anytime."
         };
       } else if (lvl === 14) {
         return {
@@ -2093,9 +2166,8 @@
           defaultCount: 9,
           maxCount: 9,
           minCount: 2,
-          hasBlack: true,
           title: "Level 14: 9-Ball Rules in Rotation",
-          hint: "Map balls onto the table. The 8-ball is money ball (last); remaining balls are randomized 1–8."
+          hint: "Place balls on the table to match spread. Tap 'Randomize Order' to assign 1–9. Drag freely anytime if cannons occur."
         };
       } else if (lvl === 15) {
         return {
@@ -2103,9 +2175,8 @@
           defaultCount: 7,
           maxCount: 7,
           minCount: 2,
-          hasBlack: false,
-          title: "Level 15: 8-Ball + 7 Rotation",
-          hint: "Shoot suit + 8-ball first. Then map the remaining 7 balls here to randomize their rotation order."
+          title: "Level 15: 8-Ball + Rotation",
+          hint: "Shoot suit + 8-ball first. Then place the remaining 7 balls here and tap 'Randomize Order'. Freely draggable anytime."
         };
       } else if (lvl === 16) {
         return {
@@ -2113,9 +2184,8 @@
           defaultCount: 15,
           maxCount: 15,
           minCount: 2,
-          hasBlack: true,
           title: "Level 16: 15 Balls Full Rotation",
-          hint: "Map balls or tap Auto-Place, then Randomize. 8-ball is final ball (#15)."
+          hint: "Place balls on the table. Tap 'Randomize Order' to assign 1–15. Drag freely anytime during runout."
         };
       }
       return null;
@@ -2124,63 +2194,53 @@
     function updateCanvasTableUI() {
       const box = document.getElementById('canvas-table-box');
       if (!box) return;
-      const cfg = getCanvasTableConfig(currentLevel);
+
+      const activeLvl = (activeGameMode === 'exam') ? rds100.currentLevel : currentLevel;
+      const cfg = getCanvasTableConfig(activeLvl);
+
       if (!cfg) {
         box.classList.remove('active');
         return;
       }
-      box.classList.add('active');
 
-      document.getElementById('table-level-hint').innerText = cfg.title;
-      document.getElementById('table-note-banner').innerText = cfg.hint;
+      // Dynamic Relocation: Attach to Exam anchor or Ladder anchor
+      const targetAnchor = (activeGameMode === 'exam')
+        ? document.getElementById('exam-canvas-anchor')
+        : document.getElementById('ladder-canvas-anchor');
 
-      if (canvasTableState.level !== currentLevel) {
-        canvasTableState.level = currentLevel;
-        canvasTableState.targetCount = cfg.defaultCount;
-        canvasTableState.isRandomized = false;
-        canvasTableState.currentTargetIndex = 1;
-        quickScatterCanvasBalls(false);
+      if (targetAnchor && box.parentElement !== targetAnchor) {
+        targetAnchor.appendChild(box);
       }
 
-      document.getElementById('canvas-ball-count-val').innerText = canvasTableState.targetCount;
-      updateCanvasTrackerStrip();
+      box.classList.add('active');
+
+      const hintEl = document.getElementById('table-level-hint');
+      const noteEl = document.getElementById('table-note-banner');
+      if (hintEl) hintEl.innerText = cfg.title;
+      if (noteEl) noteEl.innerText = cfg.hint;
+
+      if (canvasTableState.level !== activeLvl) {
+        canvasTableState.level = activeLvl;
+        canvasTableState.targetCount = cfg.defaultCount;
+        canvasTableState.isRandomized = false;
+        initDefaultCanvasBalls();
+      }
+
+      const countValEl = document.getElementById('canvas-ball-count-val');
+      if (countValEl) countValEl.innerText = canvasTableState.targetCount;
+
       initCanvasTableListeners();
       drawPoolTable();
     }
 
-    function adjustCanvasBallCount(delta) {
-      const cfg = getCanvasTableConfig(currentLevel);
-      if (!cfg) return;
-      let newCount = canvasTableState.targetCount + delta;
-      newCount = Math.max(cfg.minCount, Math.min(cfg.maxCount, newCount));
-      if (newCount === canvasTableState.targetCount) return;
-
-      canvasTableState.targetCount = newCount;
-      document.getElementById('canvas-ball-count-val').innerText = newCount;
-      quickScatterCanvasBalls(false);
-      triggerHaptic('light');
-    }
-
-    function quickScatterCanvasBalls(animate = true) {
-      const cfg = getCanvasTableConfig(currentLevel);
-      if (!cfg) return;
-
+    function initDefaultCanvasBalls() {
       canvasTableState.isRandomized = false;
-      canvasTableState.currentTargetIndex = 1;
       canvasTableState.balls = [];
-
       const count = canvasTableState.targetCount;
-      const minX = 38, maxX = 362, minY = 38, maxY = 162;
-      const minDistance = Math.min(30, 260 / Math.sqrt(count));
+      const minX = 45, maxX = 435, minY = 45, maxY = 255;
+      const minDistance = Math.min(36, 320 / Math.sqrt(count));
 
       for (let i = 0; i < count; i++) {
-        let color = 'red';
-        if (cfg.hasBlack && i === count - 1) {
-          color = 'black';
-        } else {
-          color = (i % 2 === 0) ? 'red' : 'yellow';
-        }
-
         let x = 0, y = 0, attempts = 0, valid = false;
         while (!valid && attempts < 100) {
           attempts++;
@@ -2188,137 +2248,88 @@
           y = minY + Math.random() * (maxY - minY);
           valid = true;
           for (let b of canvasTableState.balls) {
-            let dist = Math.hypot(b.x - x, b.y - y);
-            if (dist < minDistance) { valid = false; break; }
+            if (Math.hypot(b.x - x, b.y - y) < minDistance) { valid = false; break; }
           }
         }
-
         canvasTableState.balls.push({
           id: i + 1,
           x: Math.round(x),
           y: Math.round(y),
-          color: color,
-          number: null,
-          potted: false
+          color: 'red',
+          number: null
         });
       }
+    }
 
-      updateCanvasTrackerStrip();
+    function adjustCanvasBallCount(delta) {
+      const activeLvl = (activeGameMode === 'exam') ? rds100.currentLevel : currentLevel;
+      const cfg = getCanvasTableConfig(activeLvl);
+      if (!cfg) return;
+
+      let newCount = canvasTableState.targetCount + delta;
+      newCount = Math.max(cfg.minCount, Math.min(cfg.maxCount, newCount));
+      if (newCount === canvasTableState.targetCount) return;
+
+      canvasTableState.targetCount = newCount;
+      const countValEl = document.getElementById('canvas-ball-count-val');
+      if (countValEl) countValEl.innerText = newCount;
+
+      // Adjust existing balls to match count
+      if (canvasTableState.balls.length > newCount) {
+        canvasTableState.balls = canvasTableState.balls.slice(0, newCount);
+      } else if (canvasTableState.balls.length < newCount) {
+        const toAdd = newCount - canvasTableState.balls.length;
+        for (let i = 0; i < toAdd; i++) {
+          const randX = 60 + Math.random() * 360;
+          const randY = 60 + Math.random() * 180;
+          canvasTableState.balls.push({
+            id: canvasTableState.balls.length + 1,
+            x: Math.round(randX),
+            y: Math.round(randY),
+            color: 'red',
+            number: null
+          });
+        }
+      }
+      canvasTableState.isRandomized = false;
       drawPoolTable();
-      if (animate) triggerHaptic('light');
+      triggerHaptic('light');
     }
 
     function resetCanvasTable() {
       canvasTableState.isRandomized = false;
-      canvasTableState.currentTargetIndex = 1;
       canvasTableState.balls = [];
-      updateCanvasTrackerStrip();
       drawPoolTable();
       triggerHaptic('light');
     }
 
     function resetCanvasTableAfterTry() {
       canvasTableState.isRandomized = false;
-      canvasTableState.currentTargetIndex = 1;
-      const cfg = getCanvasTableConfig(currentLevel);
+      const activeLvl = (activeGameMode === 'exam') ? rds100.currentLevel : currentLevel;
+      const cfg = getCanvasTableConfig(activeLvl);
       if (cfg) {
-        quickScatterCanvasBalls(false);
+        initDefaultCanvasBalls();
       }
     }
 
     function randomizeCanvasBalls() {
       if (canvasTableState.balls.length === 0) {
-        quickScatterCanvasBalls(false);
+        initDefaultCanvasBalls();
       }
-      const cfg = getCanvasTableConfig(currentLevel);
       const total = canvasTableState.balls.length;
-
-      if (cfg && cfg.hasBlack) {
-        let others = Array.from({length: total - 1}, (_, i) => i + 1);
-        for (let i = others.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [others[i], others[j]] = [others[j], others[i]];
-        }
-        let otherIdx = 0;
-        canvasTableState.balls.forEach(b => {
-          if (b.color === 'black') {
-            b.number = total;
-          } else {
-            b.number = others[otherIdx++];
-          }
-          b.potted = false;
-        });
-      } else {
-        let numbers = Array.from({length: total}, (_, i) => i + 1);
-        for (let i = numbers.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [numbers[i], numbers[j]] = [numbers[j], numbers[i]];
-        }
-        canvasTableState.balls.forEach((b, i) => {
-          b.number = numbers[i];
-          b.potted = false;
-        });
+      let numbers = Array.from({length: total}, (_, i) => i + 1);
+      for (let i = numbers.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [numbers[i], numbers[j]] = [numbers[j], numbers[i]];
       }
+      canvasTableState.balls.forEach((b, i) => {
+        b.color = 'red';
+        b.number = numbers[i];
+      });
 
       canvasTableState.isRandomized = true;
-      canvasTableState.currentTargetIndex = 1;
       triggerHaptic('success');
-      updateCanvasTrackerStrip();
       drawPoolTable();
-    }
-
-    function potCanvasTargetBall() {
-      if (!canvasTableState.isRandomized) return;
-      const curr = canvasTableState.currentTargetIndex;
-      const targetBall = canvasTableState.balls.find(b => b.number === curr);
-
-      if (targetBall) {
-        targetBall.potted = true;
-      }
-      triggerHaptic('light');
-      canvasTableState.currentTargetIndex++;
-
-      const unpotted = canvasTableState.balls.filter(b => !b.potted);
-      if (unpotted.length === 0) {
-        triggerHaptic('success');
-      }
-
-      updateCanvasTrackerStrip();
-      drawPoolTable();
-    }
-
-    function updateCanvasTrackerStrip() {
-      const strip = document.getElementById('target-tracker-strip');
-      const label = document.getElementById('target-ball-label');
-      const counter = document.getElementById('target-step-counter');
-      const potBtn = document.getElementById('btn-pot-next');
-
-      if (!canvasTableState.isRandomized || canvasTableState.balls.length === 0) {
-        if (strip) strip.style.display = 'none';
-        return;
-      }
-
-      if (strip) strip.style.display = 'flex';
-      const total = canvasTableState.balls.length;
-      const curr = canvasTableState.currentTargetIndex;
-      const targetBall = canvasTableState.balls.find(b => b.number === curr);
-
-      if (curr > total) {
-        label.innerText = '✓ Rack Cleared!';
-        label.style.background = 'var(--success)';
-        counter.innerText = 'All Potted';
-        potBtn.innerText = '✓ Log Success Rack (+ Win)';
-        potBtn.onclick = function() {
-          logTry('win');
-        };
-      } else if (targetBall) {
-        const colorName = targetBall.color === 'red' ? '🔴 Red' : (targetBall.color === 'yellow' ? '🟡 Yellow' : '⚫ Black 8');
-        label.innerText = `Ball #${curr} (${colorName})`;
-        label.style.background = targetBall.color === 'red' ? '#ef4444' : (targetBall.color === 'yellow' ? '#d97706' : '#1e293b');
-        counter.innerText = `${curr} of ${total}`;
-        potBtn.innerText = `✓ Potted #${curr} (${colorName}) - Next`;
-        potBtn.onclick = potCanvasTargetBall;
-      }
     }
 
     function drawPoolTable() {
@@ -2326,56 +2337,57 @@
       if (!canvas) return;
       const ctx = canvas.getContext('2d');
 
-      if (canvas.width !== 400 || canvas.height !== 200) {
-        canvas.width = 400;
-        canvas.height = 200;
+      if (canvas.width !== 480 || canvas.height !== 300) {
+        canvas.width = 480;
+        canvas.height = 300;
       }
 
-      ctx.clearRect(0, 0, 400, 200);
+      ctx.clearRect(0, 0, 480, 300);
 
       // Outer Wood Frame
       ctx.fillStyle = '#0f172a';
-      ctx.fillRect(0, 0, 400, 200);
+      ctx.fillRect(0, 0, 480, 300);
 
       // Playing Surface (English Green Baize)
-      const clothX = 18, clothY = 18, clothW = 364, clothH = 164;
+      const clothX = 22, clothY = 22, clothW = 436, clothH = 256;
       ctx.fillStyle = '#14532d';
       ctx.fillRect(clothX, clothY, clothW, clothH);
 
       // Cushions Bevel Border
       ctx.strokeStyle = '#166534';
-      ctx.lineWidth = 2.5;
+      ctx.lineWidth = 3;
       ctx.strokeRect(clothX, clothY, clothW, clothH);
 
-      // Baulk Line & The 'D'
-      const baulkX = 105;
+      // Baulk Line & The 'D' (English Pool Standards)
+      const baulkX = 125;
       ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
-      ctx.lineWidth = 1.2;
+      ctx.lineWidth = 1.4;
       ctx.beginPath();
       ctx.moveTo(baulkX, clothY);
       ctx.lineTo(baulkX, clothY + clothH);
       ctx.stroke();
 
       ctx.beginPath();
-      ctx.arc(baulkX, clothY + clothH / 2, 34, Math.PI * 0.5, Math.PI * 1.5, false);
+      ctx.arc(baulkX, clothY + clothH / 2, 45, Math.PI * 0.5, Math.PI * 1.5, false);
       ctx.stroke();
 
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+      // Baulk and Foot Spots
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
       ctx.beginPath();
-      ctx.arc(baulkX, clothY + clothH / 2, 2, 0, Math.PI * 2);
+      ctx.arc(baulkX, clothY + clothH / 2, 2.5, 0, Math.PI * 2);
       ctx.fill();
       ctx.beginPath();
-      ctx.arc(280, clothY + clothH / 2, 2, 0, Math.PI * 2);
+      ctx.arc(335, clothY + clothH / 2, 2.5, 0, Math.PI * 2);
       ctx.fill();
 
-      // Pockets
+      // English Pool Pockets
       const pockets = [
-        { x: 18, y: 18, r: 13 },
-        { x: 200, y: 16, r: 11 },
-        { x: 382, y: 18, r: 13 },
-        { x: 18, y: 182, r: 13 },
-        { x: 200, y: 184, r: 11 },
-        { x: 382, y: 182, r: 13 }
+        { x: 22, y: 22, r: 15 },
+        { x: 240, y: 20, r: 13 },
+        { x: 458, y: 22, r: 15 },
+        { x: 22, y: 278, r: 15 },
+        { x: 240, y: 280, r: 13 },
+        { x: 458, y: 278, r: 15 }
       ];
 
       pockets.forEach(p => {
@@ -2388,70 +2400,52 @@
         ctx.stroke();
       });
 
-      // Balls
-      const ballRadius = 12.5;
-      const curr = canvasTableState.currentTargetIndex;
+      // Render English Pool Balls (All Balls Red, Draggable anytime for cannons)
+      const ballRadius = 15.5;
 
       canvasTableState.balls.forEach((ball) => {
-        const isTarget = canvasTableState.isRandomized && ball.number === curr && !ball.potted;
-
         ctx.save();
-        if (ball.potted) {
-          ctx.globalAlpha = 0.22;
-        }
 
-        if (isTarget) {
-          ctx.strokeStyle = '#38bdf8';
-          ctx.lineWidth = 3;
-          ctx.beginPath();
-          ctx.arc(ball.x, ball.y, ballRadius + 4, 0, Math.PI * 2);
-          ctx.stroke();
-        }
-
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+        // Drop Shadow
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.38)';
         ctx.beginPath();
-        ctx.arc(ball.x + 1.5, ball.y + 1.5, ballRadius, 0, Math.PI * 2);
+        ctx.arc(ball.x + 2, ball.y + 2, ballRadius, 0, Math.PI * 2);
         ctx.fill();
 
-        let baseColor = ball.color === 'red' ? '#dc2626' : (ball.color === 'yellow' ? '#f59e0b' : '#1e293b');
-        let highlightColor = ball.color === 'red' ? '#f87171' : (ball.color === 'yellow' ? '#fef08a' : '#475569');
-
+        // Red Ball Gradient Sheen
         let grad = ctx.createRadialGradient(
-          ball.x - 3.5, ball.y - 3.5, 1,
+          ball.x - 4, ball.y - 4, 1.5,
           ball.x, ball.y, ballRadius
         );
-        grad.addColorStop(0, highlightColor);
-        grad.addColorStop(0.5, baseColor);
-        grad.addColorStop(1, '#0f172a');
+        grad.addColorStop(0, '#f87171');
+        grad.addColorStop(0.55, '#dc2626');
+        grad.addColorStop(1, '#7f1d1d');
 
         ctx.fillStyle = grad;
         ctx.beginPath();
         ctx.arc(ball.x, ball.y, ballRadius, 0, Math.PI * 2);
         ctx.fill();
 
-        ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)';
+        // Rim stroke
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.45)';
         ctx.lineWidth = 1;
         ctx.stroke();
 
+        // Number Label (White text with subtle shadow)
         if (ball.number !== null) {
-          ctx.fillStyle = ball.color === 'yellow' ? '#0f172a' : '#ffffff';
-          ctx.font = 'bold 11px -apple-system, BlinkMacSystemFont, sans-serif';
+          ctx.fillStyle = '#ffffff';
+          ctx.font = 'bold 12.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
+          ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
+          ctx.shadowBlur = 2;
           ctx.fillText(ball.number, ball.x, ball.y + 0.5);
         } else {
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+          // Subtle dot for unassigned ball
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
           ctx.beginPath();
-          ctx.arc(ball.x, ball.y, 2, 0, Math.PI * 2);
+          ctx.arc(ball.x, ball.y, 2.5, 0, Math.PI * 2);
           ctx.fill();
-        }
-
-        if (ball.potted) {
-          ctx.fillStyle = '#16a34a';
-          ctx.font = 'bold 13px sans-serif';
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.fillText('✓', ball.x, ball.y);
         }
 
         ctx.restore();
@@ -2467,17 +2461,17 @@
         const rect = canvas.getBoundingClientRect();
         const clientX = e.touches && e.touches.length > 0 ? e.touches[0].clientX : e.clientX;
         const clientY = e.touches && e.touches.length > 0 ? e.touches[0].clientY : e.clientY;
-        const scaleX = 400 / rect.width;
-        const scaleY = 200 / rect.height;
+        const scaleX = 480 / rect.width;
+        const scaleY = 300 / rect.height;
         return {
-          x: Math.max(26, Math.min(374, (clientX - rect.left) * scaleX)),
-          y: Math.max(26, Math.min(174, (clientY - rect.top) * scaleY))
+          x: Math.max(36, Math.min(444, (clientX - rect.left) * scaleX)),
+          y: Math.max(36, Math.min(264, (clientY - rect.top) * scaleY))
         };
       }
 
       function handlePointerDown(e) {
         const pt = getCoords(e);
-        const touchRadius = 18;
+        const touchRadius = 24;
 
         let foundIdx = -1;
         for (let i = canvasTableState.balls.length - 1; i >= 0; i--) {
@@ -2489,26 +2483,16 @@
         }
 
         if (foundIdx >= 0) {
+          // Always enable dragging of balls (before and after randomization, handles cannons)
           canvasTableState.draggingIndex = foundIdx;
-          const ball = canvasTableState.balls[foundIdx];
-          if (canvasTableState.isRandomized && ball.number === canvasTableState.currentTargetIndex && !ball.potted) {
-            potCanvasTargetBall();
-            canvasTableState.draggingIndex = -1;
-            return;
-          }
-        } else if (!canvasTableState.isRandomized && canvasTableState.balls.length < canvasTableState.targetCount) {
-          const cfg = getCanvasTableConfig(currentLevel);
-          let color = (canvasTableState.balls.length % 2 === 0) ? 'red' : 'yellow';
-          if (cfg && cfg.hasBlack && canvasTableState.balls.length === canvasTableState.targetCount - 1) {
-            color = 'black';
-          }
+        } else if (canvasTableState.balls.length < canvasTableState.targetCount) {
+          // Tap empty cloth to place an additional ball
           canvasTableState.balls.push({
             id: canvasTableState.balls.length + 1,
             x: Math.round(pt.x),
             y: Math.round(pt.y),
-            color: color,
-            number: null,
-            potted: false
+            color: 'red',
+            number: null
           });
           triggerHaptic('light');
           drawPoolTable();
@@ -2886,24 +2870,28 @@
         return;
       }
 
-      // 1. Promotion Benchmark at current level
+      // 1. Eventual Promotion Benchmark at current level (Absorbing Markov Chain, Point 5)
       let currLvlIdx = currentLevel - 1;
       let currStats = levelCounts[currLvlIdx];
-      let currRackSuccess = currStats.totalRacks > 0 
-        ? (currStats.rackWins / currStats.totalRacks) * 100 
-        : 0;
-      let thresholdDiff = currRackSuccess - 61.8;
-      let diffSign = thresholdDiff >= 0 ? '+' : '';
-      
-      document.getElementById('ana-threshold').innerText = `${currRackSuccess.toFixed(1)}% (${diffSign}${thresholdDiff.toFixed(1)}%)`;
+      let p = currStats.totalRacks > 0 ? (currStats.rackWins / currStats.totalRacks) : 0;
+      let pAdv = Math.pow(p, 2) * (3 - 2 * p);
+      let pDrop = Math.pow(1 - p, 3);
+      let eventualPromo = (pAdv + pDrop > 0) ? (pAdv / (pAdv + pDrop)) * 100 : 0;
+      let rackPct = p * 100;
+
       if (currStats.totalRacks === 0) {
+        document.getElementById('ana-threshold').innerText = '0.0%';
         document.getElementById('ana-threshold-desc').innerText = `No attempts logged at Level ${currentLevel} yet.`;
-      } else if (currRackSuccess >= 61.8) {
-        document.getElementById('ana-threshold-desc').innerText = `${currStats.rackWins}/${currStats.totalRacks} racks won at Lvl ${currentLevel}. Above 61.8% (favored to advance).`;
-      } else if (currRackSuccess >= 35.0) {
-        document.getElementById('ana-threshold-desc').innerText = `${currStats.rackWins}/${currStats.totalRacks} racks won at Lvl ${currentLevel}. Within hold range (35%–61%).`;
       } else {
-        document.getElementById('ana-threshold-desc').innerText = `${currStats.rackWins}/${currStats.totalRacks} racks won at Lvl ${currentLevel}. Below 35% hold threshold.`;
+        let promoTag = eventualPromo >= 80 ? 'Favored (High)' : (eventualPromo >= 50 ? 'Positive Drift' : 'Negative Drift');
+        document.getElementById('ana-threshold').innerText = `${eventualPromo.toFixed(1)}% (${promoTag})`;
+        if (eventualPromo >= 50.0) {
+          document.getElementById('ana-threshold-desc').innerText = 
+            `${currStats.rackWins}/${currStats.totalRacks} racks won (${rackPct.toFixed(1)}%). Single-set: ${(pAdv * 100).toFixed(1)}% adv, ${(pDrop * 100).toFixed(1)}% drop. Likelihood of eventual promotion before demotion is ${eventualPromo.toFixed(1)}% (break-even is 34.7%).`;
+        } else {
+          document.getElementById('ana-threshold-desc').innerText = 
+            `${currStats.rackWins}/${currStats.totalRacks} racks won (${rackPct.toFixed(1)}%). Single-set: ${(pDrop * 100).toFixed(1)}% drop pull. Needs 34.7%+ rack rate to achieve positive promotion drift.`;
+        }
       }
 
       // 2. Variance & Volatility
@@ -3057,6 +3045,7 @@
 
       const lvlIdx = rds100.currentLevel - 1;
       const lvlInfo = LEVELS[lvlIdx];
+      const maxDeduct = lvlInfo.examBalls || lvlInfo.balls;
 
       // Calculate total deducted
       let totalDeducted = rds100.scores.reduce((sum, s) => sum + (s.completed ? s.deducted : 0), 0);
@@ -3068,14 +3057,46 @@
 
       // Active level card
       document.getElementById('exam-card-title').innerText = `Level ${lvlInfo.level}: ${lvlInfo.title}`;
-      document.getElementById('exam-card-balls').innerText = `${lvlInfo.balls} Balls`;
+      document.getElementById('exam-card-balls').innerText = 
+        (lvlInfo.level === 6 || lvlInfo.level === 8 || lvlInfo.level === 12)
+          ? `${lvlInfo.balls} on table · ${maxDeduct} to pot`
+          : `${lvlInfo.balls} Balls`;
       document.getElementById('exam-card-desc').innerText = `${lvlInfo.summary} (1 single attempt).`;
 
-      // Balls left grid
+      // 8-Ball Rule Hint (Point 3: Levels 6, 8, 12)
+      const hintEl = document.getElementById('exam-8ball-hint');
+      if (hintEl) {
+        if (lvlInfo.level === 6) {
+          hintEl.style.display = 'block';
+          hintEl.innerHTML = `<strong>8-Ball Rule Deduction:</strong> You need 4 pots to win (3 reds/yellows + 8-ball). Deduct only remaining balls of your suit + 8 (max 4 pts). If missed on the open table before deciding suit, all 4 balls remain &rarr; select <strong>4 Left (Open Table / Max)</strong>.`;
+        } else if (lvlInfo.level === 8) {
+          hintEl.style.display = 'block';
+          hintEl.innerHTML = `<strong>8-Ball Rule Deduction:</strong> You need 5 pots to win (4 reds/yellows + 8-ball). Deduct only remaining balls of your suit + 8 (max 5 pts). If missed on the open table before deciding suit, all 5 balls remain &rarr; select <strong>5 Left (Open Table / Max)</strong>.`;
+        } else if (lvlInfo.level === 12) {
+          hintEl.style.display = 'block';
+          hintEl.innerHTML = `<strong>8-Ball Rule Deduction:</strong> Standard 8-ball rules: 7 reds/yellows + 8-ball (max 8 pts). If missed on the open table before deciding suit, all 8 balls remain &rarr; select <strong>8 Left (Open Table / Max)</strong>.`;
+        } else {
+          hintEl.style.display = 'none';
+        }
+      }
+
+      // Ball Randomizer Tool for Exam Mode (Point 1: Levels 10, 13, 14, 15, 16)
+      if ([10, 13, 14, 15, 16].includes(lvlInfo.level)) {
+        updateCanvasTableUI();
+      } else {
+        const box = document.getElementById('canvas-table-box');
+        if (box) box.classList.remove('active');
+      }
+
+      // Deduction Buttons
       const grid = document.getElementById('exam-balls-grid');
       let btnsHtml = '';
-      for (let b = 1; b <= lvlInfo.balls; b++) {
-        btnsHtml += `<button class="btn-ball-deduct" onclick="logExamLevel(${b})">${b} Left (-${b})</button>`;
+      for (let b = 1; b <= maxDeduct; b++) {
+        let label = `${b} Left (-${b})`;
+        if ((lvlInfo.level === 6 || lvlInfo.level === 8 || lvlInfo.level === 12) && b === maxDeduct) {
+          label = `${b} Left (-${b}) [Max / Open Table]`;
+        }
+        btnsHtml += `<button class="btn-ball-deduct" onclick="logExamLevel(${b})">${label}</button>`;
       }
       grid.innerHTML = btnsHtml;
 
@@ -3107,14 +3128,16 @@
           <tr style="${isCurrent ? 'background: var(--card-sub); font-weight: 600;' : ''}">
             <td>L${i + 1} ${isCurrent ? '📍' : ''}</td>
             <td>${info.title}</td>
-            <td>${info.balls}</td>
+            <td>${info.examBalls || info.balls}</td>
             <td>${deductText}</td>
             <td>${scoreText}</td>
           </tr>
         `;
       }
-
       tbody.innerHTML = rowsHtml;
+
+      // Update Exam History and Line Graph
+      updateExamHistoryUI();
     }
 
     function logExamLevel(ballsLeft) {
@@ -3130,7 +3153,8 @@
       } else {
         let totalDeducted = rds100.scores.reduce((s, c) => s + c.deducted, 0);
         let finalScore = Math.max(0, 100 - totalDeducted);
-        alert(`100-Point Exam Complete!\n\nFinal Score: ${finalScore} / 100\nTotal Deducted: -${totalDeducted} points.\n\nGreat session! Exam progress saved.`);
+        saveCurrentExamToHistory(true);
+        alert(`100-Point Exam Complete!\n\nFinal Score: ${finalScore} / 100\nTotal Deducted: -${totalDeducted} points.\n\nGreat session! Saved to Exam History.`);
       }
 
       saveExamData();
@@ -3156,7 +3180,7 @@
     }
 
     function resetExam() {
-      if (confirm("Reset current 100-Point Exam? (Ladder Mode data will not be affected).")) {
+      if (confirm("Reset current 100-Point Exam in progress? (Past history entries in Exam History will be kept).")) {
         rds100 = {
           currentLevel: 1,
           scores: Array.from({length: 16}, (_, i) => ({
@@ -3169,6 +3193,214 @@
         };
         saveExamData();
         updateExamUI();
+      }
+    }
+
+    // ==========================================
+    // Exam History & Line Graph System (Point 4)
+    // ==========================================
+    function saveCurrentExamToHistory(isCompleted = false) {
+      const completedScores = rds100.scores.filter(s => s.completed);
+      if (completedScores.length === 0) {
+        if (!isCompleted) alert("No exam levels completed yet to save.");
+        return;
+      }
+      const totalDeducted = rds100.scores.reduce((sum, s) => sum + (s.completed ? s.deducted : 0), 0);
+      const finalScore = Math.max(0, 100 - totalDeducted);
+
+      let running = 100;
+      const progression = [100];
+      for (let i = 0; i < 16; i++) {
+        if (rds100.scores[i].completed) {
+          running -= rds100.scores[i].deducted;
+        }
+        progression.push(running);
+      }
+
+      const now = new Date();
+      const dateStr = now.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' }) + ' ' +
+                      now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      const session = {
+        id: 'exam_' + Date.now(),
+        date: dateStr,
+        finalScore: finalScore,
+        totalDeducted: totalDeducted,
+        completedCount: completedScores.length,
+        isFinished: (completedScores.length === 16),
+        progression: progression,
+        scores: JSON.parse(JSON.stringify(rds100.scores))
+      };
+
+      rds100History.unshift(session);
+      saveExamHistoryData();
+      selectedExamSessionId = session.id;
+      updateExamHistoryUI();
+      if (!isCompleted) showTemporaryNotice(`Saved Exam Score: ${finalScore}/100`);
+    }
+
+    function updateExamHistoryUI() {
+      // 1. Metric summary numbers
+      const countEl = document.getElementById('exam-stat-count');
+      const bestEl = document.getElementById('exam-stat-best');
+      const avgEl = document.getElementById('exam-stat-avg');
+      const latestEl = document.getElementById('exam-stat-latest');
+
+      const totalSessions = rds100History.length;
+      if (countEl) countEl.innerText = `${totalSessions} Session${totalSessions === 1 ? '' : 's'}`;
+
+      if (totalSessions > 0) {
+        const scores = rds100History.map(s => s.finalScore);
+        const best = Math.max(...scores);
+        const avg = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+        const latest = rds100History[0].finalScore;
+
+        if (bestEl) bestEl.innerText = `${best} / 100`;
+        if (avgEl) avgEl.innerText = `${avg} / 100`;
+        if (latestEl) latestEl.innerText = `${latest} / 100`;
+      } else {
+        if (bestEl) bestEl.innerText = '--';
+        if (avgEl) avgEl.innerText = '--';
+        if (latestEl) latestEl.innerText = '--';
+      }
+
+      // 2. History selector dropdown
+      const selectEl = document.getElementById('exam-history-select');
+      if (selectEl) {
+        let liveDone = rds100.scores.filter(s => s.completed).length;
+        let opts = `<option value="current">Live Session (${liveDone}/16 Done)</option>`;
+        rds100History.forEach(sess => {
+          opts += `<option value="${sess.id}">Score: ${sess.finalScore}/100 · ${sess.date} (${sess.completedCount}/16)</option>`;
+        });
+        selectEl.innerHTML = opts;
+        selectEl.value = selectedExamSessionId;
+      }
+
+      // 3. Render/update Progression Line Chart
+      renderExamProgressChart();
+    }
+
+    function onSelectExamHistorySession() {
+      const selectEl = document.getElementById('exam-history-select');
+      if (!selectEl) return;
+      selectedExamSessionId = selectEl.value;
+      renderExamProgressChart();
+    }
+
+    function deleteSelectedExamSession() {
+      if (selectedExamSessionId === 'current') {
+        return alert("Cannot delete live in-progress session. Tap 'Reset Exam' above if you want to reset current progress.");
+      }
+      const idx = rds100History.findIndex(s => s.id === selectedExamSessionId);
+      if (idx < 0) return;
+      if (confirm(`Delete exam session from ${rds100History[idx].date}?`)) {
+        rds100History.splice(idx, 1);
+        saveExamHistoryData();
+        selectedExamSessionId = 'current';
+        updateExamHistoryUI();
+        showTemporaryNotice('Exam session deleted');
+      }
+    }
+
+    function renderExamProgressChart() {
+      const canvas = document.getElementById('examProgressChart');
+      if (!canvas) return;
+
+      let progData = [];
+      let labelText = '';
+
+      if (selectedExamSessionId === 'current') {
+        let running = 100;
+        progData = [100];
+        for (let i = 0; i < 16; i++) {
+          if (rds100.scores[i].completed) {
+            running -= rds100.scores[i].deducted;
+            progData.push(running);
+          } else {
+            progData.push(null);
+          }
+        }
+        let totalDeducted = rds100.scores.reduce((s, c) => s + (c.completed ? c.deducted : 0), 0);
+        labelText = `Live Exam Progress (${Math.max(0, 100 - totalDeducted)} / 100)`;
+      } else {
+        const sess = rds100History.find(s => s.id === selectedExamSessionId);
+        if (sess && Array.isArray(sess.progression)) {
+          progData = sess.progression;
+          labelText = `Exam Score: ${sess.finalScore} / 100 (${sess.date})`;
+        } else {
+          progData = [100];
+          labelText = 'Exam Progress';
+        }
+      }
+
+      const xLabels = ['Start', 'L1', 'L2', 'L3', 'L4', 'L5', 'L6', 'L7', 'L8', 'L9', 'L10', 'L11', 'L12', 'L13', 'L14', 'L15', 'L16'];
+
+      if (!examProgressChart) {
+        const ctx = canvas.getContext('2d');
+        examProgressChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: xLabels,
+            datasets: [{
+              label: labelText,
+              data: progData,
+              borderColor: '#0284c7',
+              backgroundColor: 'rgba(2, 132, 199, 0.12)',
+              pointBackgroundColor: '#0284c7',
+              pointRadius: 4,
+              pointHoverRadius: 6,
+              tension: 0.15,
+              fill: true
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: { duration: 300 },
+            plugins: {
+              legend: {
+                display: true,
+                labels: {
+                  color: getChartTextColor(),
+                  font: { size: 11, weight: 'bold' },
+                  boxWidth: 12
+                }
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    const idx = context.dataIndex;
+                    if (idx === 0) return 'Start: 100 Points';
+                    return `Level ${idx}: ${context.parsed.y} Points`;
+                  }
+                }
+              },
+              datalabels: { display: false }
+            },
+            scales: {
+              x: {
+                grid: { color: getChartGridColor() },
+                ticks: { color: getChartSubtextColor(), font: { size: 10 } }
+              },
+              y: {
+                min: 0,
+                max: 100,
+                grid: { color: getChartGridColor() },
+                ticks: { color: getChartSubtextColor(), font: { size: 10 }, stepSize: 20 }
+              }
+            }
+          }
+        });
+      } else {
+        examProgressChart.data.labels = xLabels;
+        examProgressChart.data.datasets[0].label = labelText;
+        examProgressChart.data.datasets[0].data = progData;
+        examProgressChart.options.scales.x.grid.color = getChartGridColor();
+        examProgressChart.options.scales.x.ticks.color = getChartSubtextColor();
+        examProgressChart.options.scales.y.grid.color = getChartGridColor();
+        examProgressChart.options.scales.y.ticks.color = getChartSubtextColor();
+        examProgressChart.options.plugins.legend.labels.color = getChartTextColor();
+        examProgressChart.update();
       }
     }
 
@@ -3191,19 +3423,20 @@
     }
 
     function exportJSON() {
-      if (history.length === 0 && !rds100.scores.some(s => s.completed)) {
+      if (history.length === 0 && !rds100.scores.some(s => s.completed) && rds100History.length === 0) {
         return alert("No drill or exam history to export.");
       }
       let dataObj = {
         app: "Runout_Drill_Tracker",
-        version: "2.2",
+        version: "2.3",
         discipline: activeDiscipline,
         ladder: {
           level: currentLevel,
           round: currentRound,
           history: history
         },
-        exam100: rds100
+        exam100: rds100,
+        exam100_history: rds100History
       };
       let blob = new Blob([JSON.stringify(dataObj, null, 2)], { type: 'application/json' });
       let a = document.createElement('a');
@@ -3226,6 +3459,9 @@
             currentLevel = Math.min(16, Math.max(1, imported.ladder.level || 1));
             currentRound = Array.isArray(imported.ladder.round) ? imported.ladder.round : [];
             if (imported.exam100) rds100 = imported.exam100;
+            if (imported.exam100_history && Array.isArray(imported.exam100_history)) {
+              rds100History = imported.exam100_history;
+            }
           } else if (imported.history && Array.isArray(imported.history)) {
             history = imported.history;
             currentLevel = Math.min(16, Math.max(1, imported.level || 1));
@@ -3240,6 +3476,7 @@
 
           saveData();
           saveExamData();
+          saveExamHistoryData();
           resetChartXBounds();
           updateUI();
           updateExamUI();
@@ -3253,12 +3490,13 @@
     }
 
     function compactStorage() {
-      if (history.length === 0) return alert("No drill history to compact.");
+      if (history.length === 0 && rds100History.length === 0) return alert("No drill history to compact.");
       const beforeBytes = new Blob([
         localStorage.getItem('levelTracker_history') || '',
         localStorage.getItem('levelTracker_level') || '',
         localStorage.getItem('levelTracker_round') || '',
-        localStorage.getItem('rds100_state') || ''
+        localStorage.getItem('rds100_state') || '',
+        localStorage.getItem('rds100_history') || ''
       ]).size;
 
       // Compact history: retain essential fields (level, result, roundResult, timestamp)
@@ -3270,12 +3508,14 @@
       }));
 
       saveData();
+      saveExamHistoryData();
 
       const afterBytes = new Blob([
         localStorage.getItem('levelTracker_history') || '',
         localStorage.getItem('levelTracker_level') || '',
         localStorage.getItem('levelTracker_round') || '',
-        localStorage.getItem('rds100_state') || ''
+        localStorage.getItem('rds100_state') || '',
+        localStorage.getItem('rds100_history') || ''
       ]).size;
 
       const savedBytes = Math.max(0, beforeBytes - afterBytes);
@@ -3294,7 +3534,8 @@
         localStorage.getItem('levelTracker_history') || '',
         localStorage.getItem('levelTracker_level') || '',
         localStorage.getItem('levelTracker_round') || '',
-        localStorage.getItem('rds100_state') || ''
+        localStorage.getItem('rds100_state') || '',
+        localStorage.getItem('rds100_history') || ''
       ]).size;
 
       const quotaBytes = 5 * 1024 * 1024;
@@ -3304,6 +3545,7 @@
       alert(`Storage Health & Quota:\n\n` +
             `- Local Storage Used: ${(storageBytes / 1024).toFixed(1)} KB of ~5,120 KB (${pctUsed}% of quota)\n` +
             `- Total Recorded Attempts: ${history.length}\n` +
+            `- Total Recorded Exams: ${rds100History.length}\n` +
             `- Current Level: ${currentLevel} of 16\n` +
             `- Estimated Room Left: ~${estCapacity.toLocaleString()} more attempts\n\n` +
             `Your data is securely stored in your browser's persistent storage and will remain intact across GitHub updates.`);
